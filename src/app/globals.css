@@ -1,26 +1,130 @@
 @import "tailwindcss";
+@config "../../tailwind.config.ts";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@layer base {
+  :root {
+    /* Background Hierarchy */
+    --background: #030e36;        /* Prussian Blue - deepest background */
+    --textColor: #B9D6F2;        /* Pale Sky - primary text */
+    
+    /* Card System */
+    --card: #003559;              /* Deep Space Blue - card background */
+    --card-textColor: #B9D6F2;   /* Pale Sky - text on cards */
+    
+    /* Primary Actions (Bright accent) */
+    --primary: #006DAA;           /* Cornflower Ocean - buttons, links */
+    --primary-textColor: #ffffff; /* Pure white on primary */
+    
+    /* Secondary Actions */
+    --secondary: #0353A4;         /* Sapphire - secondary buttons */
+    --secondary-textColor: #B9D6F2; /* Pale Sky text */
+    
+    /* Muted Elements */
+    --muted: #003559;             /* Deep Space Blue */
+    --muted-textColor: #7BA3C7;  /* Medium blue-gray */
+    
+    /* Accents & Highlights */
+    --accent: #B9D6F2;            /* Pale Sky - highlights */
+    --accent-textColor: #061A40; /* Dark text on light accent */
+    
+    /* Borders & Inputs */
+    --border: #0353A4;            /* Sapphire - visible borders */
+    --input: #003559;             /* Deep Space Blue - input bg */
+    --ring: #006DAA;              /* Cornflower Ocean - focus ring */
+    
+    /* Income / Positive */
+    --success: #10b981;           /* Emerald green */
+    --success-textColor: #ffffff;
+    
+    /* Expenses / Negative */
+    --danger: #ef4444;            /* Red */
+    --danger-textColor: #ffffff;
+    
+    /* Warnings / Budget alerts */
+    --warning: #f59e0b;           /* Amber */
+    --warning-textColor: #ffffff;
+    
+    /* Info / Neutral */
+    --info: #006DAA;              /* Cornflower Ocean */
+    --info-textColor: #ffffff;
+    
+    /* Border radius */
+    --radius: 0.5rem;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  @apply bg-background text-textColor antialiased;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-textColor: var(--textColor);
+  
+  --color-card: var(--card);
+  --color-card-textColor: var(--card-textColor);
+  
+  --color-primary: var(--primary);
+  --color-primary-textColor: var(--primary-textColor);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-textColor: var(--secondary-textColor);
+  
+  --color-muted: var(--muted);
+  --color-muted-textColor: var(--muted-textColor);
+  
+  --color-accent: var(--accent);
+  --color-accent-textColor: var(--accent-textColor);
+  
+  --color-success: var(--success);
+  --color-success-textColor: var(--success-textColor);
+  
+  --color-danger: var(--danger);
+  --color-danger-textColor: var(--danger-textColor);
+  
+  --color-warning: var(--warning);
+  --color-warning-textColor: var(--warning-textColor);
+  
+  --color-info: var(--info);
+  --color-info-textColor: var(--info-textColor);
+  
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
