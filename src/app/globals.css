@@ -4,8 +4,8 @@
 @layer base {
   :root {
     /* Background Hierarchy */
-    --background: #030e36;        /* Prussian Blue - deepest background */
-    --textColor: #B9D6F2;        /* Pale Sky - primary text */
+    --background: #01061b;        /* Prussian Blue - deepest background */
+    --textColor: #d9f2ff;        /* Pale Sky - primary text */
     
     /* Card System */
     --card: #003559;              /* Deep Space Blue - card background */

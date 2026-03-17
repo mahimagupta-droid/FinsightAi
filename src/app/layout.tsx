@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-center items-center min-h-screen bg-background`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-center items-center min-h-screen bg-background text-textColor`}>
         <ClerkProvider>
           {children}
         </ClerkProvider>
