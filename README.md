@@ -83,7 +83,3 @@ FinSight AI helps users move through the complete financial lifecycle:
 - Investment portfolio tracking
 - AI financial chatbot
 - Financial goal planning
-
-## Author
-Mahima Gupta  
-Computer Science Student | Developer
