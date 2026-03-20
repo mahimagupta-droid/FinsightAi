@@ -40,7 +40,7 @@ export default function Navbar() {
 
             {/* 🔥 Active underline */}
             {pathname === link.path && (
-              <span className="absolute left-0 -bottom-1 w-full h-[2px] bg-cyan-400 rounded-full"></span>
+              <span className="absolute left-0 -bottom-1 w-full h-0.5 bg-cyan-400 rounded-full"></span>
             )}
           </Link>
         ))}
@@ -51,7 +51,7 @@ export default function Navbar() {
         {isSignedIn ? (
           <>
             <SignOutButton>
-              <button className="px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-cyan-400 to-blue-500 text-black hover:scale-105 transition-all duration-300 shadow-md hover:shadow-cyan-500/30">
+              <button className="px-4 py-2 rounded-full text-sm font-medium bg-linear-to-r from-cyan-400 to-blue-500 text-black hover:scale-105 transition-all duration-300 shadow-md hover:shadow-cyan-500/30">
                 Log Out
               </button>
             </SignOutButton>
@@ -59,7 +59,7 @@ export default function Navbar() {
           </>
         ) : (
           <SignInButton>
-            <button className="px-5 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-cyan-400 to-blue-500 text-black hover:scale-105 transition-all duration-300 shadow-md hover:shadow-cyan-500/30">
+            <button className="px-5 py-2 rounded-full text-sm font-medium bg-linear-to-r from-cyan-400 to-blue-500 text-black hover:scale-105 transition-all duration-300 shadow-md hover:shadow-cyan-500/30">
               Sign In
             </button>
           </SignInButton>
