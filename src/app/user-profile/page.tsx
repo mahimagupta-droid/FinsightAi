@@ -115,7 +115,7 @@ export default function UserProfilePage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="bg-primary text-primary-textColor px-6 py-2 rounded-lg font-medium hover:bg-secondary transition duration-200 shadow-md disabled:opacity-50"
+                                className="bg-primary text-primary-textColor px-6 py-2 rounded-lg font-medium hover:bg-secondary transition duration-200 shadow-md disabled:opacity-50 cursor-ppointer"
                             >
                                 {loading ? "Creating User" : "Create User"}
                             </button>

@@ -18,11 +18,13 @@ export default function Navbar() {
   return (
     <div className="sticky top-0 z-50 backdrop-blur-md bg-linear-to-r from-black via-[#001f2f] to-black border-b border-white/10 pl-2 pr-8 flex items-center justify-between h-30">
       <div className="flex items-center">
-        <Image
-          src={Logo}
-          alt="projectLogo"
-          className="w-52 h-auto object-contain"
-        />
+        <Link href="/signin">
+          <Image
+            src={Logo}
+            alt="projectLogo"
+            className="w-52 h-auto object-contain"
+          />
+        </Link>
       </div>
       <div className="flex items-center gap-6">
         {navLinks.map((link) => (
