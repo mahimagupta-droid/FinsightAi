@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs';
 import Navbar from "./components/navbar";
 import "../../public/projectLogo.png";
+import { Toaster } from "sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({
           <ClerkProvider>
             <Navbar />
             <div className="flex flex-col flex-1 justify-center items-center bg-background text-textColor w-full">
+              <Toaster /> 
               {children}
             </div>
           </ClerkProvider>

@@ -6,25 +6,25 @@ export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      return new Response("Unauthorized", { status: 401 });
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
     await dbConnect();
     const body = await request.json();
+    if (!body) {
+      return NextResponse.json({ success: false, message: "No data provided" }, { status: 400 });
+    }
     const { email, name, age, monthlyIncome, savingsGoal } = body;
     if (!email || !name || !age || !monthlyIncome || !savingsGoal) {
-      return new Response("Bad Request", { status: 400 });
+      return NextResponse.json({ success: false, message: "All fields are required" }, { status: 400 });
     }
-    const newUser = User.create({
-      clerkId: userId,
-      email,
-      name,
-      age,
-      monthlyIncome,
-      savingsGoal,
-    });
+    const updatedUser = await User.findOneAndUpdate(
+      { clerkId: userId },
+      { email, name, age, monthlyIncome, savingsGoal },
+      { new: true, upsert: true }
+    );
     return NextResponse.json({
       message: "User profile created successfully",
-      user: newUser,
+      user: updatedUser,
       success: true,
       status: 201,
     });
