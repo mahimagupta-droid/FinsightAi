@@ -1,30 +1,41 @@
 "use client";
 import Logo from "../../../public/projectLogo.png";
 import Image from "next/image";
-import { SignInButton, SignOutButton, UserButton, useUser } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, UserButton, useUser, useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const { userId } = useAuth();
   const { isSignedIn } = useUser();
   const pathname = usePathname();
-
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "User Profile", path: "/user-profile" },
     { name: "Transactions", path: "/add-transactions" },
   ];
-
   return (
     <div className="sticky top-0 z-50 backdrop-blur-md bg-linear-to-r from-black via-[#001f2f] to-black border-b border-white/10 pl-2 pr-8 flex items-center justify-between h-30">
       <div className="flex items-center">
-        <Link href="/signin">
-          <Image
-            src={Logo}
-            alt="projectLogo"
-            className="w-52 h-auto object-contain"
-          />
-        </Link>
+        <div>
+          {userId ? (
+            <Link href="/">
+              <Image
+                src={Logo}
+                alt="projectLogo"
+                className="w-52 h-auto object-contain"
+              />
+            </Link>
+          ) : (
+            <Link href="/signin">
+              <Image
+                src={Logo}
+                alt="projectLogo"
+                className="w-52 h-auto object-contain"
+              />
+            </Link>
+          )}
+        </div>
       </div>
       <div className="flex items-center gap-6">
         {navLinks.map((link) => (
@@ -59,6 +70,6 @@ export default function Navbar() {
           </SignInButton>
         )}
       </div>
-    </div>
+    </div >
   );
-}
+} 

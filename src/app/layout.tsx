@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs';
 import Navbar from "./components/navbar";
-import "../../public/projectLogo.png";
 import { Toaster } from "sonner";
 import { Lato, Lexend } from "next/font/google";
 
@@ -20,7 +19,10 @@ const lexend = Lexend({
 
 export const metadata: Metadata = {
   title: "FinsightAi",
-  description: "A financial tracker app that allows users to track their expenses, set budgets, and gain insights into their spending habits."
+  description: "A financial tracker app that allows users to track their expenses, set budgets, and gain insights into their spending habits.",
+  icons: {
+    icon: '/projectLogo.png',
+  },
 };
 
 export default function RootLayout({
