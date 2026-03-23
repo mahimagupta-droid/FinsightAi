@@ -39,8 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main className={`${lato.variable} ${lexend.variable} ${playfair.variable} bg-background text-textColor w-full antialiased
-       font-lato min-h-screen flex flex-col`}>
+        <main className={`${lato.variable} ${lexend.variable} ${playfair.variable} bg-background text-textColor w-full antialiased min-h-screen flex flex-col`}>
           <ClerkProvider>
             <Navbar />
             <div className="flex flex-col flex-1 justify-center items-center bg-background text-textColor w-full">

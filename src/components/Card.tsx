@@ -2,9 +2,10 @@ import {Card} from "@heroui/react";
 
 export function CardVariant() {
   return (
-    <div className="flex flex-col items-center gap-5 mt-20 border rounded p-6"> 
-    <h1 className="text-4xl m-2">Our Testimonials</h1>
-    <div className="flex flex-row gap-4">
+    <>
+    <h1 className="text-4xl m-2 text-center font-bold mb-6 mt-10">Our Testimonials</h1>
+    <div className="flex justify-center items-center rounded pb-14 w-full"> 
+    <div className="flex flex-row flex-wrap justify-center gap-4">
       <Card className="w-[320px] bg-card p-4 rounded border flex flex-col justify-center items-center" variant="transparent">
         <Card.Header>
           <Card.Title>lorem123</Card.Title>
@@ -46,5 +47,6 @@ export function CardVariant() {
       </Card>
     </div>
     </div>
+    </>
   );
 }
