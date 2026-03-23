@@ -12,7 +12,7 @@ export default function Navbar() {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "User Profile", path: "/user-profile" },
-    { name: "Transactions", path: "/add-transactions" },
+    { name: "Transactions", path: "/transactions" },
   ];
   return (
     <div className="sticky top-0 z-50 backdrop-blur-md bg-linear-to-r from-black via-[#021118] to-black border-b border-white/10 pl-2 pr-8 flex items-center justify-between h-30">
