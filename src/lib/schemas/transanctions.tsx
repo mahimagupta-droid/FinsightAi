@@ -1,58 +1,72 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-type TransactionSchemaTypes = {
-  clerkId: string;
-  email: string;
-  name: string;
-  age: number;
-  employmentStatus: "Employed" | "Unemployed" | "Student" | "Retired";
-  pocketMoney?: number;
-  income?: number;
+export type TransactionTypes = {
+  clerkId: string;        
+  amount: number;         
+  type: 'income' | 'expense';  
+  category: string;     
+  description: string;    
+  date: Date;          
+  paymentMethod?: string; 
+  isEssential: boolean;  
+  isRecurring: boolean;  
   createdAt: Date;
   updatedAt: Date;
 }
 
-const TransactionSchema = new mongoose.Schema<TransactionSchemaTypes>({
+const TransactionSchema = new mongoose.Schema<TransactionTypes>({
   clerkId: {
     type: String,
-    unique: true,
     required: true,
+    index: true,  
   },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  name: {
-    type: String,
-    required: true,
-  },
-  age: {
+  amount: {
     type: Number,
     required: true,
+    min: 0.01,
   },
-  employmentStatus: {
+  type: {
     type: String,
-    enum: ["Employed", "Unemployed", "Student", "Retired"],
     required: true,
+    enum: ['income', 'expense'],
   },
-  pocketMoney: {
-    type: Number,
+  category: {
+    type: String,
+    required: true,
+    enum: [
+      'food', 'transport', 'shopping', 'entertainment', 
+      'utilities', 'healthcare', 'education', 'rent',
+      'subscriptions', 'other_expense',
+      'salary', 'freelance', 'business', 'investment', 'other_income'
+    ],
   },
-  income: {
-    type: Number,
+  description: {
+    type: String,
+    required: true,
+    maxlength: 200,
   },
-  createdAt: {
+  date: {
     type: Date,
+    required: true,
     default: Date.now,
   },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  }
-},
-  { timestamps: true }
-);
+  paymentMethod: {
+    type: String,
+    enum: ['cash', 'card', 'upi', 'bank_transfer', 'other'],
+  },
+  isEssential: {
+    type: Boolean,
+    default: false,
+  },
+  isRecurring: {
+    type: Boolean,
+    default: false,
+  },
+}, { timestamps: true });
 
-const Transaction = mongoose.models.Transaction || mongoose.model<TransactionSchemaTypes>('Transactions', TransactionSchema);
+TransactionSchema.index({ clerkId: 1, date: -1 });
+
+const Transaction = mongoose.models.Transaction || 
+  mongoose.model<TransactionTypes>('Transaction', TransactionSchema);
+
 export default Transaction;
