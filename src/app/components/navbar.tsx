@@ -4,6 +4,7 @@ import Image from "next/image";
 import { SignInButton, SignOutButton, UserButton, useUser, useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import link from "next/link";
 
 export default function Navbar() {
   const { userId } = useAuth();
@@ -27,7 +28,7 @@ export default function Navbar() {
               />
             </Link>
           ) : (
-            <Link href="/signin">
+            <Link href="/user-profile">
               <Image
                 src={Logo}
                 alt="projectLogo"
@@ -38,7 +39,7 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-6">
-        {navLinks.map((link) => (
+        {/* {navLinks.map((link) => (
           <Link
             key={link.path}
             href={link.path}
@@ -50,7 +51,19 @@ export default function Navbar() {
               <span className="absolute left-0 -bottom-1 w-full h-0.5 bg-cyan-400 rounded-full"></span>
             )}
           </Link>
-        ))}
+        ))} */}
+        <Link className={`relative text-md font-lato transition-all duration-300 
+              ${pathname === "/" ? "text-cyan-400" : "text-white/80 hover:text-cyan-300"}`} href="/">
+          Home
+        </Link>
+        <Link className={`relative text-md font-lato transition-all duration-300 
+              ${pathname === "/user-profile" ? "text-cyan-400" : "text-white/80 hover:text-cyan-300"}`} href="/user-profile">
+          User Profile
+        </Link>
+        <Link className={`relative text-md font-lato transition-all duration-300 
+              ${pathname === "/transactions" ? "text-cyan-400" : "text-white/80 hover:text-cyan-300"}`} href="/transactions">
+          Transactions
+        </Link>
       </div>
       <div className="flex items-center gap-4">
         {isSignedIn ? (

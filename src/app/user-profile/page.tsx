@@ -1,27 +1,44 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import Background from "../../../public/user-profile-background.png";
 import Image from "next/image";
 import { UserTypes } from "@/lib/schemas/user";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 export default function UserProfilePage() {
-    const [user, setUser] = useState<UserTypes | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState<Partial<UserTypes>>({
+        email: "",
+        name: "",
+        age: 0,
+        monthlyIncome: 0,
+        savingsGoal: 0
+    });
+    const [creatingUser, setCreatingUser] = useState(false);
+    const [updatingUser, setUpdatingUser] = useState(false);
+    const [deletingUser, setDeletingUser] = useState(false);
+    const [readingUser, setReadingUser] = useState(false);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
+        setCreatingUser(true);
         try {
-            const response = await fetch("/api/user-profile", {
+            const submitResponse = await fetch("/api/user-profile", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify(user)
             });
-            const data = await response.json();
-            if (response.ok && data.success && data.user) {
+            const data = await submitResponse.json();
+            if (submitResponse.ok && data.success && data.user) {
                 toast.success(data.message);
-                setUser(null);
+                setUser({
+                    email: "",
+                    name: "",
+                    age: 0,
+                    monthlyIncome: 0,
+                    savingsGoal: 0
+                });
                 console.log("Created User:", data.user);
             } else {
                 toast.error(data.message || "Failed to save profile. Please check your inputs.");
@@ -29,10 +46,87 @@ export default function UserProfilePage() {
         } catch (error) {
             toast.error("An error occurred while updating the user profile.");
         } finally {
-            setLoading(false);
+            setCreatingUser(false);
         }
     }
 
+    const getUserProfile = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const getResponse = await fetch("/api/user-profile", {
+                method: "GET"
+            });
+            const data = await getResponse.json();
+            if (getResponse.ok && data.success && data.user) {
+                toast.success(data.message);
+                setUser(data.user);
+                console.log("Fetched User:", data.user);
+            } else {
+                toast.error(data.message || "Failed to fetch user profile.");
+            }
+        } catch (error) {
+            toast.error("error fetching user profile");
+        }
+    }
+
+    const updateUserProfile = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            setUpdatingUser(true);
+            const updateResponse = await fetch("/api/user-profile", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(user)
+            });
+            const data = await updateResponse.json();
+            if (updateResponse.ok && data.success && data.user) {
+                toast.success(data.message);
+                setUser(data.user);
+            } else {
+                toast.error(data.message || "Failed to update profile.");
+            }
+        } catch (error) {
+            toast.error("An error occurred while updating the user profile.");
+        } finally {
+            setUpdatingUser(false);
+        }
+    }
+
+    const deleteUserProfile = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            setDeletingUser(true);
+            const deleteResponse = await fetch("/api/user-profile", {
+                method: "DELETE",
+                credentials: "include"
+            });
+            const data = await deleteResponse.json();
+            if (deleteResponse.ok && data.success) {
+                toast.success(data.message);
+                setUser({
+                    email: "",
+                    name: "",
+                    age: 0,
+                    monthlyIncome: 0,
+                    savingsGoal: 0
+                });
+            } else {
+                toast.error(data.message || "Failed to delete profile.");
+            }
+        } catch (error) {
+            toast.error("An error occurred while deleting the user profile.");
+        } finally {
+            setDeletingUser(false);
+        }
+    }
+
+    useEffect(() => {
+        getUserProfile({} as React.FormEvent);
+    }, []);
+    console.log("Current User State:", user);
     return (
         <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-8 md:px-16 gap-16 min-h-[70vh]">
             <div className="flex-1 flex items-center justify-center px-6">
@@ -114,10 +208,10 @@ export default function UserProfilePage() {
                         <div className="md:col-span-2 flex justify-center mt-4">
                             <button
                                 type="submit"
-                                disabled={loading}
-                                className="bg-primary text-primary-textColor px-6 py-2 rounded-lg font-medium hover:bg-secondary transition duration-200 shadow-md disabled:opacity-50 cursor-ppointer"
+                                disabled={creatingUser}
+                                className="bg-primary text-primary-textColor px-6 py-2 rounded-lg font-medium hover:bg-secondary transition duration-200 shadow-md disabled:opacity-50 cursor-pointer"
                             >
-                                {loading ? "Creating User" : "Create User"}
+                                {creatingUser ? "Creating User" : "Create User"}
                             </button>
                         </div>
                     </form>
