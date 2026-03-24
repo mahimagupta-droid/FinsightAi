@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import Background from "../../../public/user-profile-background.png";
@@ -5,6 +6,8 @@ import Image from "next/image";
 import { UserTypes } from "@/lib/schemas/user";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import {User2Icon} from "lucide-react"
+import { get } from "http";
 export default function UserProfilePage() {
     const [user, setUser] = useState<Partial<UserTypes>>({
         email: "",
@@ -29,18 +32,22 @@ export default function UserProfilePage() {
                 },
                 body: JSON.stringify(user)
             });
-            const data = await response.json();
-            if (!response.ok) {
+            if(response.ok){
+                const data = await response.json();
+                if(data.success && data.user){
+                    toast.success("User created successfully");
+                    setUser({
+                        email: "",
+                        name: "",
+                        age: 0,
+                        monthlyIncome: 0,
+                        savingsGoal: 0
+                    })
+                }
+            } else {
+                const data = await response.json();
                 throw new Error(data.error || "Failed to create user");
             }
-            toast.success("User created successfully");
-            setUser({
-                email: "",
-                name: "",
-                age: 0,
-                monthlyIncome: 0,
-                savingsGoal: 0
-            })
         } catch (error) {
             toast.error("Failed to create user");
         } finally {
@@ -63,39 +70,104 @@ export default function UserProfilePage() {
                 } else {
                     throw new Error(data.error || "Failed to fetch user profile");
                 }
+            } else {
+                if (response.status === 404) {
+                    // User has not created a profile yet
+                    return;
+                }
+                const errData = await response.json();
+                throw new Error(errData.error || "Failed to fetch user profile");
             }
-        } catch (error) {
-            toast.error("Failed to fetch user profile");
+        } catch (error: any) {
+            toast.error(error.message || "Failed to fetch user profile");
         } finally {
             setReadingUser(false);
         }
     }
 
+    const deleteUser = async () => {
+        try {
+            setDeletingUser(true);
+            const response = await fetch("/api/user-profile", {
+                method: "DELETE"
+            });
+            if(response.ok){
+                const data = await response.json();
+                if(data.success && data.message){
+                    toast.success(data.message);
+                    setUser({
+                        email: "",
+                        name: "",
+                        age: 0,
+                        monthlyIncome: 0,
+                        savingsGoal: 0
+                    }); 
+                }
+            } else {
+                const data = await response.json();
+                throw new Error(data.error || "Failed to delete user");
+            }
+        } catch (error: any) {
+            toast.error(`${error.message}` || "Failed to delete user");
+        } finally {
+            setDeletingUser(false);
+        }
+    }
+
+    const updateUser = async () => {
+        try {
+            setUpdatingUser(true);
+            const response = await fetch("/api/user-profile", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            });
+            if(response.ok){
+                const data = await response.json();
+                if(data.success && data.message){
+                    toast.success(`${data.message}`)
+                }
+            } else {
+                const data = await response.json();
+                throw new Error(data.error || "Failed to update user");
+            }
+        } catch (error: any) {
+            toast.error(error.message)
+        } finally {
+            setUpdatingUser(false);
+        }
+    }
     useEffect(() => {
         getUserInfo();
     }, []);
 
-    // if (user?.clerkId) {
-    //     return (
-
-    //     )
-    // }
     return (
-
-
         <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-8 md:px-16 gap-16 min-h-[70vh]">
             {user?.clerkId ? (
-                <div className=" bg-card text-card-textColor border border-border rounded-xl shadow-2xl p-8">
-                    <h1>User Profile</h1>
+                <div className=" bg-card text-card-textColor border border-border rounded-xl shadow-2xl p-8 font-lato text-lg">
+                    <div className="flex flex-row items-center justify-center gap-2 mb-4 text-xl">
+                        <User2Icon className="w-9 h-9 text-primary mb-2" />
+                        <h1 className="items-center justify-center flex">User Profile</h1>
+                    </div>
                     <p>Email: {user.email}</p>
                     <p>Name: {user.name}</p>
                     <p>Age: {user.age}</p>
                     <p>Monthly Income: {user.monthlyIncome}</p>
                     <p>Savings Goal: {user.savingsGoal}</p>
+                    <div className="gap-4 flex flex-row mt-5 items-center justify-center">
+                        <button onClick={deleteUser} disabled={deletingUser} className="bg-accent text-accent-textColor p-1.5 rounded-lg cursor-pointer">
+                            {deletingUser ? "Deleting..." : "Delete"}
+                        </button>
+                        <button onClick={updateUser} disabled={updatingUser} className="bg-accent text-accent-textColor p-1.5 rounded-lg cursor-pointer">
+                            {updatingUser ? "Updating..." : "Update"}
+                        </button>
+                    </div>
                 </div>
             ) : (
                 <div className="flex-1 flex items-center justify-center px-6">
-                    <div className="w-full max-w-3xl bg-card text-card-textColor border border-border rounded-xl shadow-2xl p-8">
+                    <div className="w-full max-w-2xl bg-card text-card-textColor border border-border rounded-xl shadow-2xl p-8">
                         <h3 className="text-3xl font-semibold text-center mb-8 text-textColor">
                             User Profile
                         </h3>
