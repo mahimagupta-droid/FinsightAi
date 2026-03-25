@@ -144,7 +144,7 @@ export default function UserProfilePage() {
     }, []);
 
     return (
-        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center px-8 md:px-16 gap-16 min-h-[70vh]">
+        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center px-8 md:px-16 gap-16 min-h-[70vh] mt-11 mb-11">
             {user?.clerkId ? (
                 <div className=" bg-card text-card-textColor border border-border rounded-xl shadow-2xl p-8 font-lato text-lg">
                     <div className="flex flex-row items-center justify-center gap-2 mb-4 text-xl">

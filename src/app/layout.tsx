@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import Navbar from "./components/navbar";
 import { Toaster } from "sonner";
 import { Lato, Lexend, Playfair_Display } from "next/font/google";
+import Footer from "@/components/ui/footer";
 
 const lato = Lato({
   subsets: ["latin"],
@@ -43,8 +44,11 @@ export default function RootLayout({
           <ClerkProvider>
             <Navbar />
             <div className="flex flex-col flex-1 justify-center items-center bg-background text-textColor w-full">
-              <Toaster /> 
+              <Toaster />
               {children}
+            </div>
+            <div className="w-full">
+              <Footer />
             </div>
           </ClerkProvider>
         </main>

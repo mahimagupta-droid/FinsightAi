@@ -49,9 +49,6 @@ export default function HomePage() {
       <div className="flex flex-col items-center justify-center mb-15 w-full">
         <FAQs />
       </div>
-      <div className="w-full">
-        <Footer />
-      </div>
     </div>
   )
 } 

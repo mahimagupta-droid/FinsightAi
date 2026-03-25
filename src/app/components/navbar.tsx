@@ -47,6 +47,10 @@ export default function Navbar() {
               ${pathname === "/transactions" ? "text-cyan-400" : "text-white/80 hover:text-cyan-300"}`} href="/transactions">
           Transactions
         </Link>
+        <Link className={`relative text-md font-lato transition-all duration-300 
+              ${pathname === "/dashboard" ? "text-cyan-400" : "text-white/80 hover:text-cyan-300"}`} href="/dashboard">
+          Dashboard
+        </Link>
       </div>
       <div className="flex items-center gap-4">
         {isSignedIn ? (

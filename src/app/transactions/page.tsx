@@ -2,7 +2,7 @@
 "use client";
 import Image from "next/image";
 import Transaction from "../../../public/transactions-bg.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/constants";
 export default function AddTransactionsPage() {
@@ -17,6 +17,7 @@ export default function AddTransactionsPage() {
     isRecurring: false,
   })
   const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     try {
@@ -50,8 +51,35 @@ export default function AddTransactionsPage() {
       setLoading(false)
     }
   }
+
+  const getTransactions = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/transactions", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.transactions) {
+          toast.success(data.message);
+          setTransaction(data.transactions);
+        }
+      }
+    } catch (error: any) {
+      toast.error(`${error.message}`)
+    } finally {
+      setLoading(false)
+    }
+  }
+  useEffect(() => {
+    getTransactions()
+  }, [])
+
   return (
-    <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center px-8 md:px-16 gap-16 min-h-[70vh]">
+    <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center px-8 md:px-16 gap-16 min-h-[70vh] mt-10 mb-10">
       <div className="flex-1 flex items-center justify-center px-6 w-full">
         <div className="w-full max-w-2xl bg-card text-card-textColor border border-border rounded-xl shadow-2xl p-8">
           <h3 className="text-3xl font-semibold text-center mb-8 text-textColor">
