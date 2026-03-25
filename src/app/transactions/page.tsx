@@ -74,6 +74,7 @@ export default function AddTransactionsPage() {
       setLoading(false)
     }
   }
+  console.log(transaction)
   useEffect(() => {
     getTransactions()
   }, [])
