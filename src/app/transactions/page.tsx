@@ -9,14 +9,13 @@ import { TransactionCard } from "@/components/TransactionCard";
 import { JSX } from "react/jsx-runtime";
 export default function AddTransactionsPage() {
   type fetchedTransactionType = {
-  map(arg0: (transactions: { _id: Key | null | undefined; amount: number; category: string; type: string; date: Date; description: string; paymentMethod: string; }) => JSX.Element): import("react").ReactNode;
-  _id: string | null;
-  amount: number | null;
-  category: string | null;
-  type: string | null;
-  date: string | null;
-  description: string | null;
-  paymentMethod: string | null;
+  _id: string;
+  amount: number;
+  category: string;
+  type: string;
+  date: Date;
+  description: string;
+  paymentMethod: string;
 };
   const [transaction, setTransaction] = useState({
     amount: 0,
@@ -28,7 +27,7 @@ export default function AddTransactionsPage() {
     isEssential: false,
     isRecurring: false,
   })
-  const [fetchedTransactions, setFetchedTransactions] = useState<fetchedTransactionType>([])
+  const [fetchedTransactions, setFetchedTransactions] = useState<fetchedTransactionType[]>([])
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.SubmitEvent) => {
@@ -250,7 +249,7 @@ export default function AddTransactionsPage() {
       <h3 className="flex justify-center items-center text-3xl">Transaction Records</h3>
       {fetchedTransactions && (
       <div className="mb-14 mt-14 flex gap-6 flex-wrap">      
-            {fetchedTransactions.map((transactions: { _id: Key | null | undefined; amount: number; category: string; type: string; date: Date; description: string; paymentMethod: string; }) => (
+            {fetchedTransactions.map((transactions) => (
               <TransactionCard
                 key={transactions._id}
                 amount={transactions.amount}
