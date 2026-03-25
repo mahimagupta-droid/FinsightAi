@@ -2,7 +2,7 @@
 import Background from "../../public/homepage-img.png"
 import Image from "next/image"
 import FAQs from "@/components/Accordion"
-import { CardVariant } from "@/components/Card"
+import { TestimonialCard } from "@/components/TestimonialCard"
 import { useAuth } from "@clerk/nextjs"
 import Link from "next/link";
 import { testimonials } from "../../src/components/database/testimonials";
@@ -46,7 +46,7 @@ export default function HomePage() {
         <h1 className="text-4xl m-2 text-center font-bold mb-6 mt-10">Our Testimonials</h1>
         <div className="grid grid-cols-4 items-center justify-center mb-15 w-full gap-7">
           {testimonials.map((testimonial) => (
-            <CardVariant
+            <TestimonialCard 
               key={testimonial.id}
               name={testimonial.name}
               role={testimonial.role}

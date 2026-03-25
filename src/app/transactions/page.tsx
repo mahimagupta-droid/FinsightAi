@@ -2,10 +2,22 @@
 "use client";
 import Image from "next/image";
 import Transaction from "../../../public/transactions-bg.png";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/constants";
+import { TransactionCard } from "@/components/TransactionCard";
+import { JSX } from "react/jsx-runtime";
 export default function AddTransactionsPage() {
+  type fetchedTransactionType = {
+  map(arg0: (transactions: { _id: Key | null | undefined; amount: number; category: string; type: string; date: Date; description: string; paymentMethod: string; }) => JSX.Element): import("react").ReactNode;
+  _id: string | null;
+  amount: number | null;
+  category: string | null;
+  type: string | null;
+  date: string | null;
+  description: string | null;
+  paymentMethod: string | null;
+};
   const [transaction, setTransaction] = useState({
     amount: 0,
     type: "select",
@@ -16,6 +28,7 @@ export default function AddTransactionsPage() {
     isEssential: false,
     isRecurring: false,
   })
+  const [fetchedTransactions, setFetchedTransactions] = useState<fetchedTransactionType>([])
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.SubmitEvent) => {
@@ -65,7 +78,7 @@ export default function AddTransactionsPage() {
         const data = await response.json();
         if (data.success && data.transactions) {
           toast.success(data.message);
-          setTransaction(data.transactions);
+          setFetchedTransactions(data.transactions);
         }
       }
     } catch (error: any) {
@@ -80,6 +93,7 @@ export default function AddTransactionsPage() {
   }, [])
 
   return (
+    <div>
     <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center px-8 md:px-16 gap-16 min-h-[70vh] mt-10 mb-10">
       <div className="flex-1 flex items-center justify-center px-6 w-full">
         <div className="w-full max-w-2xl bg-card text-card-textColor border border-border rounded-xl shadow-2xl p-8">
@@ -232,5 +246,25 @@ export default function AddTransactionsPage() {
         <Image src={Transaction} alt="page-img" className="w-full max-w-112.5 lg:max-w-150 h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,109,170,0.5)] transition-transform duration-700" priority />
       </div>
     </div>
+    <div className="mb-10 mt-15 bg-accent-textColor p-10 rounded-lg">
+      <h3 className="flex justify-center items-center text-3xl">Transaction Records</h3>
+      {fetchedTransactions && (
+      <div className="mb-14 mt-14 flex gap-6 flex-wrap">      
+            {fetchedTransactions.map((transactions: { _id: Key | null | undefined; amount: number; category: string; type: string; date: Date; description: string; paymentMethod: string; }) => (
+              <TransactionCard
+                key={transactions._id}
+                amount={transactions.amount}
+                category={transactions.category}
+                type={transactions.type}
+                date={transactions.date}
+                description={transactions.description}
+                paymentMethod={transactions.paymentMethod}
+              />
+            ))}
+        </div>
+        )}
+    </div>
+    </div>
+  
   );
 }

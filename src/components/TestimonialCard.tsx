@@ -4,7 +4,7 @@ type CardVariantTypes = {
   role: string,
   text: string
 }
-export function CardVariant({name, role, text}: CardVariantTypes) {
+export function TestimonialCard({name, role, text}: CardVariantTypes) {
   return (
     <>
     <div className="flex justify-center items-center rounded pb-14 w-full"> 
