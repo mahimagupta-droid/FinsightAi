@@ -1,24 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from "mongoose";
 
-export type TransactionTypes = {
-  clerkId: string;        
-  amount: number;         
-  type: 'income' | 'expense';  
-  category: string;     
-  description: string;    
-  date: Date;          
-  paymentMethod?: string; 
-  isEssential: boolean;  
-  isRecurring: boolean;  
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "../constants";
 
-const TransactionSchema = new mongoose.Schema<TransactionTypes>({
+const TransactionSchema = new mongoose.Schema({
   clerkId: {
     type: String,
     required: true,
-    index: true,  
+    index: true,
   },
   amount: {
     type: Number,
@@ -33,12 +22,18 @@ const TransactionSchema = new mongoose.Schema<TransactionTypes>({
   category: {
     type: String,
     required: true,
-    enum: [
-      'food', 'transport', 'shopping', 'entertainment', 
-      'utilities', 'healthcare', 'education', 'rent',
-      'subscriptions', 'other_expense',
-      'salary', 'freelance', 'business', 'investment', 'other_income'
-    ],
+    validate: {
+      validator: function (value: string) {
+        if ((this as any).type === "expense") {
+          return EXPENSE_CATEGORIES.includes(value);
+        }
+        if ((this as any).type === "income") {
+          return INCOME_CATEGORIES.includes(value);
+        }
+        return false;
+      },
+      message: "Invalid category for selected type"
+    }
   },
   description: {
     type: String,
@@ -66,7 +61,5 @@ const TransactionSchema = new mongoose.Schema<TransactionTypes>({
 
 TransactionSchema.index({ clerkId: 1, date: -1 });
 
-const Transaction = mongoose.models.Transaction || 
-  mongoose.model<TransactionTypes>('Transaction', TransactionSchema);
-
-export default Transaction;
+export default mongoose.models.Transaction ||
+  mongoose.model("Transaction", TransactionSchema);
