@@ -1,12 +1,11 @@
 "use client";
 import Background from "../../public/homepage-img.png"
 import Image from "next/image"
-import Footer from "@/components/ui/footer"
 import FAQs from "@/components/Accordion"
 import { CardVariant } from "@/components/Card"
 import { useAuth } from "@clerk/nextjs"
 import Link from "next/link";
-
+import { testimonials } from "../../src/components/database/testimonials";
 export default function HomePage() {
   const user = useAuth();
   return (
@@ -30,10 +29,10 @@ export default function HomePage() {
               Your intelligent companion for tracking expenses, setting smart goals, and achieving financial freedom. Take the guesswork out of your finances.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-center lg:justify-start">
-              {user.isSignedIn? (
+              {user.isSignedIn ? (
                 <button className="px-8 py-3.5 bg-primary hover:bg-cyan-300 text-gray-900 font-semibold rounded-md transition-all">
-                Get Started
-              </button>
+                  Get Started
+                </button>
               ) : (
                 <Link href="/signup" className="px-8 py-3.5 bg-primary hover:bg-cyan-300 text-gray-900 font-semibold rounded-md transition-all">
                   Sign Up
@@ -43,8 +42,18 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center mb-15 w-full">
-        <CardVariant />
+      <div>
+        <h1 className="text-4xl m-2 text-center font-bold mb-6 mt-10">Our Testimonials</h1>
+        <div className="grid grid-cols-4 items-center justify-center mb-15 w-full gap-7">
+          {testimonials.map((testimonial) => (
+            <CardVariant
+              key={testimonial.id}
+              name={testimonial.name}
+              role={testimonial.role}
+              text={testimonial.text}
+            />
+          ))}
+        </div>
       </div>
       <div className="flex flex-col items-center justify-center mb-15 w-full">
         <FAQs />
