@@ -15,6 +15,8 @@ export default function AddTransactionsPage() {
     date: Date;
     description: string;
     paymentMethod: string;
+    isEssential: boolean;
+    isRecurring: boolean;
   };
 
   const [transaction, setTransaction] = useState({
@@ -290,7 +292,10 @@ export default function AddTransactionsPage() {
                 date={transactions.date}
                 description={transactions.description}
                 paymentMethod={transactions.paymentMethod}
+                isEssential={transactions.isEssential}
+                isRecurring={transactions.isRecurring}
                 onDelete={handleDelete}
+                onUpdate={getTransactions}
               />
             ))}
           </div>
