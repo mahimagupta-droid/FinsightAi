@@ -3,7 +3,7 @@
 "use client";
 import Background from "../../../public/user-profile-background.png";
 import Image from "next/image";
-import { UserTypes } from "@/lib/schemas/user";
+import { UserTypes } from "@/lib/schemas/User";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { User2Icon } from "lucide-react"

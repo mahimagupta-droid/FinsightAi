@@ -1,13 +1,15 @@
 import { Card } from "@heroui/react";
 type TransactionCardTypes = {
+  _id: string,
   amount: number,
   category: string,
-  type: string, 
-  date: Date, 
-  description: string, 
-  paymentMethod: string
-} 
-export function TransactionCard({amount, category, type, date, description, paymentMethod}: TransactionCardTypes) {
+  type: string,
+  date: Date,
+  description: string,
+  paymentMethod: string,
+  onDelete: (_id: string) => void
+}
+export function TransactionCard({ _id, amount, category, type, date, description, paymentMethod, onDelete }: TransactionCardTypes) {
   return (
     <>
       <Card className="w-[320px] bg-card p-4 rounded border">
@@ -26,10 +28,12 @@ export function TransactionCard({amount, category, type, date, description, paym
             {paymentMethod}
           </p>
           <div className="flex gap-2 mt-4">
-            <button className="text-blue-400 border border-border px-2 py-1 rounded">
+            <button className="text-blue-400 border border-border px-2 py-1 rounded cursor-pointer">
               Edit
             </button>
-            <button className="text-red-400 border border-border px-2 py-1 rounded">
+            <button className="text-red-400 border border-border px-2 py-1 rounded cursor-pointer"
+              onClick={() => onDelete(_id)}
+            >
               Delete
             </button>
           </div>

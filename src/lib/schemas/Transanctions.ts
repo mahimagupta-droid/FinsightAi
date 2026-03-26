@@ -61,5 +61,5 @@ const TransactionSchema = new mongoose.Schema({
 
 TransactionSchema.index({ clerkId: 1, date: -1 });
 
-export default mongoose.models.Transaction ||
-  mongoose.model("Transaction", TransactionSchema);
+const Transaction = mongoose.models.Transaction || mongoose.model("Transaction", TransactionSchema); 
+export default Transaction;

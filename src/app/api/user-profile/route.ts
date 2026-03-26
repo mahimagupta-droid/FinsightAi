@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { dbConnect } from "@/lib/dbConnect/dbConnections";
-import User from "@/lib/schemas/user";
+import User from "@/lib/schemas/User";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 

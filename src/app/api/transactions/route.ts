@@ -1,9 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import Transaction from "@/lib/schemas/transanctions";
+import Transaction from "@/lib/schemas/Transanctions";
+import { dbConnect } from "@/lib/dbConnect/dbConnections";
 
 export async function POST(request: NextRequest) {
   try {
+    dbConnect();
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -20,15 +22,15 @@ export async function POST(request: NextRequest) {
       isRecurring,
     } = body;
     if (
-      !amount ||
-      !type ||
-      !category ||
+      amount == null || amount <= 0 ||
+      !type || type === "select" ||
+      !category || category === "select" ||
       !description ||
       !date ||
-      !paymentMethod
+      !paymentMethod || paymentMethod === "select"
     ) {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: "All fields are required and must be valid" },
         { status: 400 },
       );
     }
@@ -67,6 +69,7 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+     dbConnect();
     const transactions = await Transaction.find({ clerkId: userId });
     if (!transactions) {
       return NextResponse.json(
@@ -83,6 +86,7 @@ export async function GET() {
       { status: 200 },
     );
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
