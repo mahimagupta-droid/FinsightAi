@@ -16,13 +16,39 @@ export default function LineChart({ data }: { data: any }) {
     return (
         <Line data={data} options={{
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: "top",
+                    labels: {
+                        color: "rgba(255, 255, 255, 0.7)",
+                    }
                 },
                 title: {
                     display: true,
-                    text: "Expenses",
+                    text: "Expenses Trend",
+                    color: "white",
+                    font: {
+                        size: 16
+                    }
+                },
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: "rgba(255, 255, 255, 0.8)",
+                    },
+                    grid: {
+                        color: "rgba(255, 255, 255, 0.1)"
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: "rgba(255, 255, 255, 0.8)",
+                    },
+                    grid: {
+                        color: "rgba(255, 255, 255, 0.1)"
+                    }
                 },
             },
         }} />
