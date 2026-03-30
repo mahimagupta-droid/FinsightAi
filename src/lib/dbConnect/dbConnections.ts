@@ -18,7 +18,9 @@ export async function dbConnect() {
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string).then((mongoose) => {
+    cached.promise = mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string, {
+      dbName: 'finsightAi'
+    }).then((mongoose) => {
       return mongoose;
     });
   }
