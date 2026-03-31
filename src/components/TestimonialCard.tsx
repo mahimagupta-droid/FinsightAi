@@ -6,20 +6,16 @@ type CardVariantTypes = {
 }
 export function TestimonialCard({name, role, text}: CardVariantTypes) {
   return (
-    <>
-    <div className="flex justify-center items-center rounded pb-14 w-full"> 
-    <div className="flex flex-row flex-wrap justify-center gap-4">
-      <Card className="w-[320px] bg-card p-4 rounded border flex flex-col justify-center items-center" variant="transparent">
+    <div className="flex justify-center w-full">
+      <Card className="w-[320px] h-47.5 bg-card p-6 rounded border flex flex-col justify-between items-start font-lexend" variant="transparent"> 
         <Card.Header>
-          <Card.Title>{name}</Card.Title>
-          <Card.Description>{role}</Card.Description>
+          <Card.Title className="font-bold text-lg">{name}</Card.Title>
+          <Card.Description className="text-[14px] opacity-85">{role}</Card.Description>
         </Card.Header>
-        <Card.Content>
+        <Card.Content className="text-[15px] leading-relaxed flex-1">
           <p>{text}</p>
         </Card.Content>
       </Card>
     </div>
-    </div>
-    </>
   );
 }

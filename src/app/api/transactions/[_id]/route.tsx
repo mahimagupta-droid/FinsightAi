@@ -22,7 +22,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         return NextResponse.json({
             transaction: transaction,
             success: true,
-            message: "Successful deletion of transaction",
+            message: "Transaction successfully deleted",
         }, { status: 200 })
     } catch (error) {
         return NextResponse.json({

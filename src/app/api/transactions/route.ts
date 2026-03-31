@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       {
         transaction: response,
         success: true,
-        message: "Successful creation of transaction",
+        message: "Transaction successfully created!",
       },
       { status: 201 },
     );
@@ -81,7 +81,7 @@ export async function GET() {
       {
         transactions: transactions,
         success: true,
-        message: "Successful retrieval of transactions",
+        message: "Transaction successfully retrieved.",
       },
       { status: 200 },
     );

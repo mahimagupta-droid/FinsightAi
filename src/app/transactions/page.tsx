@@ -31,14 +31,10 @@ export default function AddTransactionsPage() {
   })
 
   const [fetchedTransactions, setFetchedTransactions] = useState<fetchedTransactionType[] | null>(null)
-  const [submitTransaction, setSubmitTransaction] = useState(false);
-  const [fetchTransaction, setFetchTransaction] = useState(false);
-  const [deleteTransaction, setDeleteTransaction] = useState(false);
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     try {
-      setSubmitTransaction(true);
       const response = await fetch("/api/transactions", {
         method: "POST",
         headers: {
@@ -65,14 +61,11 @@ export default function AddTransactionsPage() {
       }
     } catch (error: any) {
       toast.error(`${error.message}`)
-    } finally {
-      setSubmitTransaction(false);
     }
   }
 
   const getTransactions = async () => {
     try {
-      setFetchTransaction(true);
       const response = await fetch("/api/transactions", {
         method: "GET",
         headers: {
@@ -82,20 +75,16 @@ export default function AddTransactionsPage() {
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.transactions) {
-          toast.success(data.message);
           setFetchedTransactions(data.transactions);
         }
       }
     } catch (error: any) {
       toast.error(`${error.message}`)
-    } finally {
-      setFetchTransaction(false);
     }
   }
 
   const handleDelete = async (_id: string) => {
     try {
-      setDeleteTransaction(true);
       const response = await fetch(`/api/transactions/${_id}`, {
         method: "DELETE",
         headers: {
@@ -112,8 +101,6 @@ export default function AddTransactionsPage() {
       }
     } catch (error: any) {
       toast.error(`${error.message}`)
-    } finally {
-      setDeleteTransaction(false);
     }
   }
   useEffect(() => {
@@ -156,7 +143,7 @@ export default function AddTransactionsPage() {
                   value={transaction.type}
                   onChange={(e) => setTransaction({ ...transaction, type: e.target.value as "expense" | "income", category: "" })}
                   className="w-full bg-input text-textColor border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-ring focus:outline-none transition">
-                  <option value="select" disabled defaultChecked>Select Expense Type</option>
+                  <option value="select" disabled defaultChecked>Select Transaction Type</option>
                   <option value="expense">Expense</option>
                   <option value="income">Income</option>
                 </select>

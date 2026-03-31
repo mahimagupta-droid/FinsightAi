@@ -44,7 +44,7 @@ export default function HomePage() {
       </div>
       <div>
         <h1 className="text-4xl m-2 text-center font-bold mb-6 mt-10">Our Testimonials</h1>
-        <div className="grid grid-cols-4 items-center justify-center mb-15 w-full gap-7">
+        <div className="grid md:grid-rows-4 grid-cols-2 items-center justify-center mb-15 w-full gap-10">
           {testimonials.map((testimonial) => (
             <TestimonialCard 
               key={testimonial.id}
