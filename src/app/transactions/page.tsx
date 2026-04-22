@@ -247,7 +247,7 @@ export default function AddTransactionsPage() {
               <div className="md:col-span-2 flex justify-center mt-4">
                 <button
                   type="submit"
-                  className="bg-primary text-primary-textColor px-6 py-2 rounded-lg font-medium hover:bg-secondary transition duration-200 shadow-md cursor-pointer"
+                  className="bg-primary text-primary-textColor px-6 py-2 rounded-lg font-medium hover:bg-primary/85 transition-all duration-200 shadow-md cursor-pointer"
                 >
                   Add Transaction
                 </button>
@@ -256,12 +256,12 @@ export default function AddTransactionsPage() {
           </div>
         </div>
         <div className="flex-1 flex justify-center md:justify-end items-center relative mt-10 md:mt-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 lg:w-96 lg:h-96 bg-blue-500/20 blur-[100px] rounded-full -z-10 animate-pulse hidden md:block" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 lg:w-96 lg:h-96 bg-primary/15 blur-[100px] rounded-full -z-10 animate-pulse hidden md:block" />
           <Image src={Transaction} alt="page-img" className="w-full max-w-112.5 lg:max-w-150 h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,109,170,0.5)] transition-transform duration-700" priority />
         </div>
       </div>
-      <div className="mb-10 mt-15 bg-accent-textColor p-10 rounded-lg">
-        <h3 className="flex justify-center items-center text-3xl">Transaction Records</h3>
+      <div className="mb-10 mt-15 bg-card border border-border p-10 rounded-lg transition-colors duration-300">
+        <h3 className="flex justify-center items-center text-3xl text-textColor font-semibold">Transaction Records</h3>
         {fetchedTransactions == null && (
           <div>
             No transactions added yet!

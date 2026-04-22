@@ -92,7 +92,7 @@ export default function Dashboard() {
                     "#a78bfa",
                     "#22d3ee"
                 ],
-                borderColor: "#01061b",
+                borderColor: "var(--background)",
                 borderWidth: 2,
             }
         ]
@@ -166,14 +166,14 @@ export default function Dashboard() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 bg-[#00263f] p-6 rounded-xl w-full h-[625px]">
+                <div className="md:col-span-2 bg-card border border-border p-6 rounded-xl w-full h-[625px] transition-colors duration-300">
                     <PieChart data={pieChartData} />
                 </div>
                 <div className="flex flex-col gap-6">
-                    <div className="bg-[#00263f] p-6 rounded-xl h-[300px]">
+                    <div className="bg-card border border-border p-6 rounded-xl h-[300px] transition-colors duration-300">
                         <LineChart data={expenseChartData} />
                     </div>
-                    <div className="bg-[#00263f] p-6 rounded-xl h-[300px]">
+                    <div className="bg-card border border-border p-6 rounded-xl h-[300px] transition-colors duration-300">
                         <BarChart data={barChartData} />
                     </div>
                 </div>

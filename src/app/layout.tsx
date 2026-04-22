@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs';
+import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "./components/navbar";
 import { Toaster } from "sonner";
 import { Lato, Lexend, Playfair_Display } from "next/font/google";
@@ -38,18 +39,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <main className={`${lato.variable} ${lexend.variable} ${playfair.variable} bg-background text-textColor w-full antialiased min-h-screen flex flex-col`}>
           <ClerkProvider>
-            <Navbar />
-            <div className="flex flex-col flex-1 justify-center items-center bg-background text-textColor w-full">
-              <Toaster />
-              {children}
-            </div>
-            <div className="w-full">
-              <Footer />
-            </div>
+            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+              <Navbar />
+              <div className="flex flex-col flex-1 justify-center items-center bg-background text-textColor w-full transition-colors duration-300">
+                <Toaster />
+                {children}
+              </div>
+              <div className="w-full">
+                <Footer />
+              </div>
+            </ThemeProvider>
           </ClerkProvider>
         </main>
       </body>

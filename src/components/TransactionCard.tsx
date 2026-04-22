@@ -62,7 +62,7 @@ export function TransactionCard({ _id, amount, category, type, date, description
 
   if (isEditing) {
     return (
-      <Card className="w-[320px] bg-card p-4 rounded border">
+      <Card className="w-[320px] bg-card text-card-textColor p-4 rounded border border-border transition-colors duration-300">
         <form onSubmit={handleUpdate} className="flex flex-col gap-3 font-lexend mt-2">
           <input
             type="number"
@@ -107,14 +107,14 @@ export function TransactionCard({ _id, amount, category, type, date, description
             <button
               type="submit"
               disabled={updatingTransaction}
-              className="flex-1 bg-primary text-primary-textColor py-1 rounded-lg text-sm disabled:opacity-50 cursor-pointer">{updatingTransaction ? "Saving..." : "Save"}</button>
+              className="flex-1 bg-primary text-primary-textColor py-1 rounded-lg text-sm disabled:opacity-50 cursor-pointer hover:bg-primary/85 transition-all duration-200">{updatingTransaction ? "Saving..." : "Save"}</button>
             <button
               type="button"
               onClick={() => {
                 setIsEditing(false);
                 setEditedTransaction({ amount, type, category, description, date: new Date(date), paymentMethod, isEssential, isRecurring });
               }}
-              className="flex-1 bg-button text-button-textColor border border-border py-1 rounded-lg text-sm cursor-pointer hover:bg-card">Cancel</button>
+              className="flex-1 bg-muted text-textColor border border-border py-1 rounded-lg text-sm cursor-pointer hover:bg-muted/70 transition-all duration-200">Cancel</button>
           </div>
         </form>
       </Card>
@@ -123,7 +123,7 @@ export function TransactionCard({ _id, amount, category, type, date, description
 
   return (
     <>
-      <Card className="w-[320px] bg-card p-4 rounded border">
+      <Card className="w-[320px] bg-card text-card-textColor p-4 rounded border border-border transition-colors duration-300">
         <Card.Header>
           <Card.Title className="text-lg font-semibold">
             ₹{amount} • {category}
@@ -139,10 +139,10 @@ export function TransactionCard({ _id, amount, category, type, date, description
             {paymentMethod}
           </p>
           <div className="flex gap-2 mt-4">
-            <button className="text-blue-400 border border-border px-2 py-1 rounded cursor-pointer" onClick={() => setIsEditing(true)}>
+            <button className="text-primary hover:text-primary/75 border border-border px-2 py-1 rounded cursor-pointer transition-colors duration-200" onClick={() => setIsEditing(true)}>
               Edit
             </button>
-            <button className="text-red-400 border border-border px-2 py-1 rounded cursor-pointer"
+            <button className="text-danger hover:text-danger/75 border border-border px-2 py-1 rounded cursor-pointer transition-colors duration-200"
               onClick={() => onDelete(_id)}
             >
               Delete

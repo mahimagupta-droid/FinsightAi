@@ -7,49 +7,43 @@
 
 @layer base {
   :root {
-    /* Background Hierarchy */
-    --background: #01061b;        /* Prussian Blue - deepest background */
-    --textColor: #d9f2ff;        /* Pale Sky - primary text */
+    /* Light Mode Background Hierarchy */
+    --background: #f0f7ff;        /* Sky-tinted white */
+    --textColor: #0c1a2e;        /* Deep navy */
 
     /* Card System */
-    --card: #003559;              /* Deep Space Blue - card background */
-    --card-textColor: #B9D6F2;   /* Pale Sky - text on cards */
+    --card: #ffffff;              /* White */
+    --card-textColor: #0f172a;   /* Slate 900 */
 
-    /* Primary Actions (Bright accent) */
-    --primary: #67c7ff;           /* Cornflower Ocean - buttons, links */
-    --primary-textColor: #ffffff; /* Pure white on primary */
+    /* Primary Actions */
+    --primary: #0077b6;           /* Deep financial sky blue */
+    --primary-textColor: #ffffff; 
 
     /* Secondary Actions */
-    --secondary: #9dceff;         /* Sapphire - secondary buttons */
-    --secondary-textColor: #B9D6F2; /* Pale Sky text */
+    --secondary: #e0f2fe;         /* Sky 100 */
+    --secondary-textColor: #0369a1; /* Sky 700 */
 
     /* Muted Elements */
-    --muted: #003559;             /* Deep Space Blue */
-    --muted-textColor: #7BA3C7;  /* Medium blue-gray */
+    --muted: #e8f1f8;             /* Blue-tinted neutral */
+    --muted-textColor: #475569;  /* Slate 600 */
 
     /* Accents & Highlights */
-    --accent: #B9D6F2;            /* Pale Sky - highlights */
-    --accent-textColor: #071940; /* Dark text on light accent */
+    --accent: #bae6fd;            /* Sky 200 */
+    --accent-textColor: #0c4a6e; /* Sky 900 */
 
     /* Borders & Inputs */
-    --border: #0353A4;            /* Sapphire - visible borders */
-    --input: #003559;             /* Deep Space Blue - input bg */
-    --ring: #006DAA;              /* Cornflower Ocean - focus ring */
+    --border: #cdd9e5;            /* Blue-tinted, more visible */
+    --input: #ffffff;             
+    --ring: #38bdf8;              /* Sky 400 */
 
-    /* Income / Positive */
-    --success: #10b981;           /* Emerald green */
+    /* Status */
+    --success: #10b981;           
     --success-textColor: #ffffff;
-
-    /* Expenses / Negative */
-    --danger: #ef4444;            /* Red */
+    --danger: #ef4444;            
     --danger-textColor: #ffffff;
-
-    /* Warnings / Budget alerts */
-    --warning: #f59e0b;           /* Amber */
+    --warning: #f59e0b;           
     --warning-textColor: #ffffff;
-
-    /* Info / Neutral */
-    --info: #006DAA;              /* Cornflower Ocean */
+    --info: #006DAA;              
     --info-textColor: #ffffff;
 
     /* Border radius */
@@ -63,8 +57,8 @@
     @apply border-border outline-ring/50;
 }
 .active {
-  border-bottom: 2px solid #00d4ff;
-  color: #00d4ff;
+  border-bottom: 2px solid var(--primary);
+  color: var(--primary);
 }
   body {
     @apply bg-background text-foreground;
@@ -197,6 +191,51 @@ html {
 }
 
 .dark {
+    /* Background Hierarchy */
+    --background: #01061b;        /* Prussian Blue - deepest background */
+    --textColor: #d9f2ff;        /* Pale Sky - primary text */
+
+    /* Card System */
+    --card: #003559;              /* Deep Space Blue - card background */
+    --card-textColor: #B9D6F2;   /* Pale Sky - text on cards */
+
+    /* Primary Actions (Bright accent) */
+    --primary: #67c7ff;           /* Cornflower Ocean - buttons, links */
+    --primary-textColor: #ffffff; /* Pure white on primary */
+
+    /* Secondary Actions */
+    --secondary: #9dceff;         /* Sapphire - secondary buttons */
+    --secondary-textColor: #B9D6F2; /* Pale Sky text */
+
+    /* Muted Elements */
+    --muted: #003559;             /* Deep Space Blue */
+    --muted-textColor: #7BA3C7;  /* Medium blue-gray */
+
+    /* Accents & Highlights */
+    --accent: #B9D6F2;            /* Pale Sky - highlights */
+    --accent-textColor: #071940; /* Dark text on light accent */
+
+    /* Borders & Inputs */
+    --border: #0353A4;            /* Sapphire - visible borders */
+    --input: #003559;             /* Deep Space Blue - input bg */
+    --ring: #006DAA;              /* Cornflower Ocean - focus ring */
+
+    /* Income / Positive */
+    --success: #10b981;           /* Emerald green */
+    --success-textColor: #ffffff;
+
+    /* Expenses / Negative */
+    --danger: #ef4444;            /* Red */
+    --danger-textColor: #ffffff;
+
+    /* Warnings / Budget alerts */
+    --warning: #f59e0b;           /* Amber */
+    --warning-textColor: #ffffff;
+
+    /* Info / Neutral */
+    --info: #006DAA;              /* Cornflower Ocean */
+    --info-textColor: #ffffff;
+
   --destructive: oklch(0.704 0.191 22.216);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
