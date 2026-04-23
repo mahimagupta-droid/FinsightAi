@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod";
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "../constants";
 import mongoose from "mongoose";
