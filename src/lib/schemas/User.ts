@@ -1,35 +1,38 @@
+import { z } from "zod";
 import mongoose from "mongoose";
 
-export type UserTypes = {
-    clerkId: string;
-    email: string;
-    name: string;
-    age: number;
-    monthlyIncome: number;
-    savingsGoal: number;
-    createdAt: Date;
-    updatedAt: Date;
-}
+const UserZodFormat = z.object({
+    clerkId: z.string(),
+    email: z.string(),
+    name: z.string(),
+    age: z.number(),
+    monthlyIncome: z.number(),
+    savingsGoal: z.number(),
+    createdAt: z.date(),
+    updatedAt: z.date()
+})
+
+export type UserTypes = z.infer<typeof UserZodFormat>;
 
 const UserSchema = new mongoose.Schema<UserTypes>({
     clerkId: {
         type: String,
         unique: true,
-        required: true,  
-        index: true,     
+        required: true,
+        index: true,
     },
     email: {
         type: String,
         unique: true,
-        required: true, 
+        required: true,
     },
     name: {
         type: String,
-        required: true,  
+        required: true,
     },
     age: {
         type: Number,
-        required: true,  
+        required: true,
     },
     monthlyIncome: {
         type: Number,
@@ -39,7 +42,7 @@ const UserSchema = new mongoose.Schema<UserTypes>({
     savingsGoal: {
         type: Number,
         default: 0,
-        required: true, 
+        required: true,
     },
 }, { timestamps: true });
 

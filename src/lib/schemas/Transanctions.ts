@@ -1,9 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from "mongoose";
-
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "../constants";
+import { z } from "zod";
 
-const TransactionSchema = new mongoose.Schema({
+const TransactionZodFormat = z.object({
+  clerkId: z.string(),
+  amount: z.number(),
+  type: z.enum(['income', 'expense']),
+  category: z.union([z.enum(INCOME_CATEGORIES), z.enum(EXPENSE_CATEGORIES)]),
+  description: z.string(),
+  date: z.date(),
+  paymentMethod: z.enum(['cash', 'card', 'upi', 'bank_transfer', 'other']),
+  isEssential: z.boolean().optional(),
+  isRecurring: z.boolean().optional(),
+})
+
+type TransactionType = z.infer<typeof TransactionZodFormat>
+
+const TransactionSchema = new mongoose.Schema<TransactionType>({
   clerkId: {
     type: String,
     required: true,
@@ -61,5 +75,5 @@ const TransactionSchema = new mongoose.Schema({
 
 TransactionSchema.index({ clerkId: 1, date: -1 });
 
-const Transaction = mongoose.models.Transaction || mongoose.model("Transaction", TransactionSchema); 
+const Transaction = mongoose.models.Transaction || mongoose.model("Transaction", TransactionSchema);
 export default Transaction;
