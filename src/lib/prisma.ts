@@ -7,7 +7,7 @@ const prismaClientSingleton = () => {
     
     if (!connectionString) {
         // Fallback for build-time if env vars are missing
-        return new PrismaClient();
+        return new PrismaClient({});
     }
 
     const pool = new Pool({ connectionString });
