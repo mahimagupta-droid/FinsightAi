@@ -1,12 +1,17 @@
 import { PrismaClient } from "../generated/prisma/client";
+import { Pool } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) throw new Error("DATABASE_URL is not set");
-
-const adapter = new PrismaNeon({ connectionString });
-
 const prismaClientSingleton = () => {
+    const connectionString = process.env.DATABASE_URL;
+    
+    if (!connectionString) {
+        // Fallback for build-time if env vars are missing
+        return new PrismaClient();
+    }
+
+    const pool = new Pool({ connectionString });
+    const adapter = new PrismaNeon(pool);
     return new PrismaClient({ adapter });
 };
 
