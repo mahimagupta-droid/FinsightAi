@@ -73,6 +73,7 @@ const config: Config = {
       fontFamily: {
         lato: "var(--font-lato)",
         lexend: "var(--font-lexend)",
+        playfair: "var(--font-playfair)",
       },
       // Custom animations (optional)
       keyframes: {

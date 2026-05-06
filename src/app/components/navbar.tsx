@@ -35,6 +35,10 @@ export default function Navbar() {
               text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/dashboard">
           Dashboard
         </Link>
+        <Link className="relative text-md font-lato transition-all duration-300 
+              text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/budget">
+          Budget
+        </Link>
       </div>
       <div className="flex items-center gap-4">
         <ThemeToggle />
