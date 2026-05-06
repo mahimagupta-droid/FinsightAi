@@ -9,8 +9,11 @@ import { testimonials } from "../../src/components/database/testimonials";
 export default function HomePage() {
   const user = useAuth();
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-screen top-0">
-      <div className="w-full min-h-screen bg-background flex items-center justify-center px-6 lg:px-16 transition-colors duration-300">
+    <>
+      <div className="w-full pt-24 pb-16 lg:pt-0 lg:pb-0 min-h-screen bg-background flex flex-col items-center justify-center px-6 lg:px-16 transition-colors duration-300 gap-8 lg:gap-16">
+        <span className="text-sm md:text-base font-semibold tracking-[0.2em] text-primary uppercase text-center">
+          Earn &rarr; Track &rarr; Analyze &rarr; Save &rarr; Grow
+        </span>
         <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
             <Image
@@ -46,7 +49,7 @@ export default function HomePage() {
         <h1 className="text-4xl m-2 text-center font-bold mb-6 mt-10 text-textColor">Our Testimonials</h1>
         <div className="grid grid-cols-2 sm:grid-cols-4 items-center justify-center mb-15 w-full gap-10">
           {testimonials.map((testimonial) => (
-            <TestimonialCard 
+            <TestimonialCard
               key={testimonial.id}
               name={testimonial.name}
               role={testimonial.role}
@@ -58,6 +61,6 @@ export default function HomePage() {
       <div className="flex flex-col items-center justify-center mb-15 w-full">
         <FAQs />
       </div>
-    </div>
+    </>
   )
-} 
+}
