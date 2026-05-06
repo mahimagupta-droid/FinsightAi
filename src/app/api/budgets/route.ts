@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
-import { dbConnect } from "@/lib/dbConnect/dbConnections";
-import Budget from "@/lib/schemas/Budget";
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "../../../lib/constants";
+import prisma from "@/lib/prisma";
 
 const CreateBudgetSchema = z.object({
   category: z.union([
@@ -22,11 +21,16 @@ export async function GET(req: NextRequest) {
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  await dbConnect();
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
-  const budgets = await Budget.find({ clerkId: userId, month, year });
+  const budgets = await prisma.budget.findMany({
+    where: {
+      clerkId: userId,
+      month,
+      year,
+    },
+  });
   return NextResponse.json(budgets, { status: 200 });
 }
 
@@ -35,7 +39,6 @@ export async function POST(req: NextRequest) {
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  await dbConnect();
   const body = await req.json();
   const result = CreateBudgetSchema.safeParse(body);
   if (!result.success) {
@@ -45,10 +48,28 @@ export async function POST(req: NextRequest) {
     );
   }
   const { category, monthlyLimit, month, year } = result.data;
-  const budget = await Budget.findOneAndUpdate(
-    { clerkId: userId, category, month, year }, // WHO + WHAT + WHEN
-    { $set: { monthlyLimit } },                  // only update the limit
-    { upsert: true, new: true, runValidators: true }
-  );
+  const budget = await prisma.budget.upsert({
+    where: {
+      clerkId_category_month_year: {
+        clerkId: userId,
+        category,
+        month,
+        year,
+      },
+    },
+    update: {
+      monthlyLimit,
+      category,
+      month,
+      year,
+    },
+    create: {
+      clerkId: userId,
+      category,
+      monthlyLimit,
+      month,
+      year,
+    },
+  });
   return NextResponse.json(budget, { status: 200 });
 }

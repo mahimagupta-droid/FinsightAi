@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  clerkId       String   @unique
+  email         String   @unique
+  name          String
+  age           Int
+  monthlyIncome Float    @default(0)
+  savingsGoal   Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([clerkId])
+}
+
+model Budget {
+  id           String   @id @default(cuid())
+  clerkId      String
+  category     String
+  monthlyLimit Float
+  month        Int
+  year         Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([clerkId, category, month, year])
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  clerkId       String
+  amount        Float
+  type          String // 'income' or 'expense'
+  category      String
+  description   String
+  date          DateTime @default(now())
+  paymentMethod String?
+  isEssential   Boolean  @default(false)
+  isRecurring   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([clerkId, date(sort: Desc)])
+}

@@ -1,5 +1,4 @@
-import { dbConnect } from "@/lib/dbConnect/dbConnections";
-import Transaction from "@/lib/schemas/Transanctions";
+import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,8 +11,12 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
                 message: "Unauthorized"
             }, { status: 401 })
         }
-        dbConnect();
-        const transaction = await Transaction.deleteOne({ _id: _id, clerkId: userId });
+        const transaction = await prisma.transaction.delete({
+            where: {
+                clerkId: userId,
+                id: _id,
+            },
+        });
         if (!transaction) {
             return NextResponse.json({
                 message: "Transaction not found"
@@ -36,31 +39,25 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     try {
         const { _id } = await params;
         const { userId } = await auth();
-
         if (!userId) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
-
-        await dbConnect();
-
         const { amount, type, category, description, date, paymentMethod, isEssential, isRecurring } = await request.json();
-
-        const transaction = await Transaction.findOneAndUpdate(
-            { _id, clerkId: userId },
-            { amount, type, category, description, date, paymentMethod, isEssential, isRecurring },
-            { new: true }
-        );
-
+        const transaction = await prisma.transaction.update({
+            where: {
+                clerkId: userId,
+                id: _id,
+            },
+            data: { amount, type, category, description, date, paymentMethod, isEssential, isRecurring },
+        });
         if (!transaction) {
             return NextResponse.json({ message: "Transaction not found" }, { status: 404 });
         }
-
         return NextResponse.json({
             success: true,
             transaction,
             message: "Transaction updated successfully",
         });
-
     } catch (error) {
         return NextResponse.json({ message: "Internal server error" }, { status: 500 });
     }

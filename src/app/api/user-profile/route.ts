@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { dbConnect } from "@/lib/dbConnect/dbConnections";
-import User from "@/lib/schemas/User";
+import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,16 +10,17 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    await dbConnect();
     const reqBody = await request.json();
     const { email, name, age, monthlyIncome, savingsGoal } = reqBody;
-    const createResponse = await User.create({
-      clerkId: userId,
-      email: email,
-      name: name,
-      age: age,
-      monthlyIncome: monthlyIncome,
-      savingsGoal: savingsGoal,
+    const createResponse = await prisma.user.create({
+      data: {
+        clerkId: userId,
+        email: email,
+        name: name,
+        age: age,
+        monthlyIncome: monthlyIncome,
+        savingsGoal: savingsGoal,
+      }
     });
     return NextResponse.json({
       message: "User created successfully",
@@ -41,8 +41,7 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    await dbConnect();
-    const userProfile = await User.findOne({ clerkId: userId });
+    const userProfile = await prisma.user.findUnique({ where: { clerkId: userId } });
     if (!userProfile) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -64,8 +63,7 @@ export async function DELETE() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    await dbConnect();
-    const deleteResponse = await User.findOneAndDelete({ clerkId: userId });
+    const deleteResponse = await prisma.user.delete({ where: { clerkId: userId } });
     if (!deleteResponse) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -87,14 +85,18 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    await dbConnect();
     const reqBody = await request.json();
     const { email, name, age, monthlyIncome, savingsGoal } = reqBody;
-    const updatedUser = await User.findOneAndUpdate(
-      { clerkId: userId },
-      { email, name, age, monthlyIncome, savingsGoal },
-      { new: true },
-    );
+    const updatedUser = await prisma.user.update({
+      where: { clerkId: userId },
+      data: {
+        email: email,
+        name: name,
+        age: age,
+        monthlyIncome: monthlyIncome,
+        savingsGoal: savingsGoal,
+      },
+    });
     if (updatedUser) {
       return NextResponse.json({
         message: "User updated successfully",

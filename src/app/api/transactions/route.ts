@@ -1,11 +1,9 @@
+import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import Transaction from "@/lib/schemas/Transanctions";
-import { dbConnect } from "@/lib/dbConnect/dbConnections";
 
 export async function POST(request: NextRequest) {
   try {
-    dbConnect();
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -35,16 +33,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await Transaction.create({
-      clerkId: userId,
-      amount: amount,
-      type: type,
-      category: category,
-      description: description,
-      date: date,
-      paymentMethod: paymentMethod,
-      isEssential: isEssential ?? false,
-      isRecurring: isRecurring ?? false,
+    const response = await prisma.transaction.create({
+      data: {
+        clerkId: userId,
+        amount: amount,
+        type: type,
+        category: category,
+        description: description,
+        date: date,
+        paymentMethod: paymentMethod,
+        isEssential: isEssential ?? false,
+        isRecurring: isRecurring ?? false,
+      }
     });
     return NextResponse.json(
       {
@@ -69,8 +69,8 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-     dbConnect();
-    const transactions = await Transaction.find({ clerkId: userId });
+    //  dbConnect();
+    const transactions = await prisma.transaction.findMany({ where: { clerkId: userId } });
     if (!transactions) {
       return NextResponse.json(
         { error: "No transactions found" },
