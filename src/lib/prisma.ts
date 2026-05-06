@@ -4,14 +4,16 @@ import { PrismaNeon } from '@prisma/adapter-neon';
 
 const prismaClientSingleton = () => {
     const connectionString = process.env.DATABASE_URL;
-    
+
     if (!connectionString) {
         // Fallback for build-time if env vars are missing
-        return new PrismaClient({});
+        return new PrismaClient({
+            adapter: new PrismaNeon({ connectionString })
+        });
     }
 
     const pool = new Pool({ connectionString });
-    const adapter = new PrismaNeon(pool);
+    const adapter = new PrismaNeon({ connectionString });
     return new PrismaClient({ adapter });
 };
 
