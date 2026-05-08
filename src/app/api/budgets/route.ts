@@ -1,20 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { z } from "zod";
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "../../../lib/constants";
 import prisma from "@/lib/prisma";
-
-const CreateBudgetSchema = z.object({
-  category: z.union([
-    z.enum(EXPENSE_CATEGORIES as [string, ...string[]]),
-    z.enum(INCOME_CATEGORIES as [string, ...string[]]),
-  ]),
-  monthlyLimit: z
-    .number({ message: "Monthly limit must be a number" })
-    .positive("Monthly limit must be greater than zero"),
-  month: z.number().int().min(1).max(12),
-  year: z.number().int().min(2000),
-});
+import { CreateBudgetSchema } from "@/lib/schemas/Budget";
 
 export async function GET(req: NextRequest) {
   const { userId } = await auth();

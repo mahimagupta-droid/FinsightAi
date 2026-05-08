@@ -11,7 +11,6 @@ export async function DELETE(
     if (!userId) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    // await dbConnect();
     const deleted = await prisma.budget.delete({
         where: {
             id,
