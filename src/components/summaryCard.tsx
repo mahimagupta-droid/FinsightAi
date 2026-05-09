@@ -2,10 +2,9 @@ type SummaryCardProps = {
     title: string;
     amount: number;
     type: "income" | "expense" | "balance";
-    icon: React.ReactNode;
 };
 
-const formatter = new Intl.NumberFormat("en-US", {
+export const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,
