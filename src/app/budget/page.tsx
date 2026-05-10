@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SummaryCard from "@/components/summaryCard";
 import CategoryBudgetList from "@/components/Budgets/CategoryBudgetList";
 import CreateBudgetForm from "@/components/Budgets/CreateBudgetForm";
-
+import DonutChart from "@/components/Budgets/DonutChart";
 const MOCK_BUDGETS = [
     { id: "1", category: "Food", spent: 320, limit: 500, icon: "UtensilsCrossed", color: "#FF6384" },
     { id: "2", category: "Transport", spent: 180, limit: 200, icon: "Car", color: "#36A2EB" },
@@ -15,6 +15,15 @@ export default function BudgetPage() {
     const [budgets, setBudgets] = useState(MOCK_BUDGETS);
     const totalExpenses = budgets.reduce((sum, items) => sum + items.spent, 0);
     const totalBudget = budgets.reduce((sum, items) => sum + items.limit, 0);
+    const fetchBudgets = async () => {
+        const res = await fetch("/api/budgets");
+        const data = await res.json();
+        setBudgets(data);
+    };
+    useEffect(() => {
+        fetchBudgets();
+    }, []);
+
     return (
         <main className="w-full">
             <div className="flex flex-col items-center justify-center">
@@ -24,10 +33,16 @@ export default function BudgetPage() {
                     <SummaryCard title="Remaining" amount={MOCK_INCOME - totalExpenses} type="balance" />
                     <SummaryCard title="Total Income" amount={MOCK_INCOME} type="income" />
                 </div>
-                <div className="mt-[2rem] mb-10 mb-5 w-3/4">
-                    <CategoryBudgetList budgets={budgets} />
+                <div className="mt-[2rem] w-3/4 grid grid-cols-3 gap-6">
+                    <div className="col-span-2">
+                        <CategoryBudgetList budgets={budgets} />
+                    </div>
+                    <div className="flex flex-col items-center gap-4 col-span-1">
+                        <DonutChart budgets={budgets} />
+                        <CreateBudgetForm onSuccess={fetchBudgets} />
+                    </div>
                 </div>
             </div>
-        </main>
+        </main >
     );
 }

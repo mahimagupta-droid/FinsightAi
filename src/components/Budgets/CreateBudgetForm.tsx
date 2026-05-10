@@ -1,9 +1,8 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { z } from "zod";
-
 const schema = z.object({
   category: z.string().min(1, "Category is required"),
   limit: z.number().min(1, "Must be greater than 0"),
@@ -16,17 +15,23 @@ interface CreateBudgetFormProps {
 }
 
 export default function CreateBudgetForm({ onSuccess }: CreateBudgetFormProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema as any),
+  const { reset, register, handleSubmit, formState: { errors }, } = useForm<FormData>({
+    resolver: standardSchemaResolver(schema),
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log("Form Data:", data);
-    onSuccess();
+    try {
+      const res = await fetch("/api/budgets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to create budget");
+      reset();
+      onSuccess();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
