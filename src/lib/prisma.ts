@@ -2,21 +2,29 @@ import { PrismaClient } from "../generated/prisma/client";
 import { Pool } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 
+// const prismaClientSingleton = () => {
+//     const connectionString = process.env.DATABASE_URL;
+
+//     if (!connectionString) {
+//         // Fallback for build-time if env vars are missing
+//         const pool = new Pool({ connectionString });
+//         const adapter = new PrismaNeon(pool);
+//         return new PrismaClient({ adapter });
+//     }
+
+//     const pool = new Pool({ connectionString });
+//     const adapter = new PrismaNeon(pool);
+//     return new PrismaClient({ adapter });
+// };
 const prismaClientSingleton = () => {
     const connectionString = process.env.DATABASE_URL;
-
     if (!connectionString) {
-        // Fallback for build-time if env vars are missing
-        const pool = new Pool({ connectionString });
-        const adapter = new PrismaNeon(pool);
-        return new PrismaClient({ adapter });
+        throw new Error("DATABASE_URL environment variable is not set");
     }
-
     const pool = new Pool({ connectionString });
     const adapter = new PrismaNeon(pool);
     return new PrismaClient({ adapter });
 };
-
 declare global {
     var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
 }

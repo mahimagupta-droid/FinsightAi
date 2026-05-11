@@ -11,7 +11,7 @@ export async function DELETE(
     if (!userId) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const deleted = await prisma.budget.delete({
+    const deleted = prisma.budget.delete({
         where: {
             id,
             clerkId: userId,

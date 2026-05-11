@@ -11,7 +11,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
                 message: "Unauthorized"
             }, { status: 401 })
         }
-        const transaction = await prisma.transaction.delete({
+        const transaction = prisma.transaction.delete({
             where: {
                 clerkId: userId,
                 id: _id,
@@ -43,7 +43,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
         const { amount, type, category, description, date, paymentMethod, isEssential, isRecurring } = await request.json();
-        const transaction = await prisma.transaction.update({
+        const transaction = prisma.transaction.update({
             where: {
                 clerkId: userId,
                 id: _id,

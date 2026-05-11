@@ -9,16 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const body = await request.json();
-    const {
-      amount,
-      type,
-      category,
-      description,
-      date,
-      paymentMethod,
-      isEssential,
-      isRecurring,
-    } = body;
+    const { amount, type, category, description, date, paymentMethod, isEssential, isRecurring } = body;
     if (
       amount == null || amount <= 0 ||
       !type || type === "select" ||
@@ -33,7 +24,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await prisma.transaction.create({
+    const response = prisma.transaction.create({
       data: {
         clerkId: userId,
         amount: amount,
@@ -70,7 +61,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     //  dbConnect();
-    const transactions = await prisma.transaction.findMany({ where: { clerkId: userId } });
+    const transactions = prisma.transaction.findMany({ where: { clerkId: userId } });
     if (!transactions) {
       return NextResponse.json(
         { error: "No transactions found" },

@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
-  const budgets = await prisma.budget.findMany({
+  const budgets = prisma.budget.findMany({
     where: {
       clerkId: userId,
       month,
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     );
   }
   const { category, monthlyLimit, month, year } = result.data;
-  const budget = await prisma.budget.upsert({
+  const budget = prisma.budget.upsert({
     where: {
       clerkId_category_month_year: {
         clerkId: userId,

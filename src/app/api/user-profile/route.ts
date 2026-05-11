@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
     const reqBody = await request.json();
     const { email, name, age, monthlyIncome, savingsGoal } = reqBody;
-    const createResponse = await prisma.user.create({
+    const createResponse = prisma.user.create({
       data: {
         clerkId: userId,
         email: email,
@@ -42,7 +42,7 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userProfile = await prisma.user.findUnique({ where: { clerkId: userId } });
+    const userProfile = prisma.user.findUnique({ where: { clerkId: userId } });
     if (!userProfile) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -64,7 +64,7 @@ export async function DELETE() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const deleteResponse = await prisma.user.delete({ where: { clerkId: userId } });
+    const deleteResponse = prisma.user.delete({ where: { clerkId: userId } });
     if (!deleteResponse) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -88,7 +88,7 @@ export async function PUT(request: NextRequest) {
     }
     const reqBody = await request.json();
     const { email, name, age, monthlyIncome, savingsGoal } = reqBody;
-    const updatedUser = await prisma.user.update({
+    const updatedUser = prisma.user.update({
       where: { clerkId: userId },
       data: {
         email: email,
