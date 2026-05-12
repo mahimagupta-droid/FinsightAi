@@ -18,11 +18,8 @@ import { PrismaNeon } from '@prisma/adapter-neon';
 // };
 const prismaClientSingleton = () => {
     const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) {
-        throw new Error("DATABASE_URL environment variable is not set");
-    }
-    const pool = new Pool({ connectionString });
-    const adapter = new PrismaNeon(pool);
+    if (!connectionString) throw new Error("DATABASE_URL not set");
+    const adapter = new PrismaNeon({ connectionString });
     return new PrismaClient({ adapter });
 };
 declare global {

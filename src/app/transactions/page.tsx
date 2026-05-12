@@ -8,7 +8,7 @@ import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/constants";
 import { TransactionCard } from "@/components/TransactionCard";
 export default function AddTransactionsPage() {
   type fetchedTransactionType = {
-    _id: string;
+    id: string;
     amount: number;
     category: string;
     type: string;
@@ -64,25 +64,38 @@ export default function AddTransactionsPage() {
     }
   }
 
+  // const getTransactions = async () => {
+  //   try {
+  //     const response = await fetch("/api/transactions", {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       if (data.success && data.transactions) {
+  //         setFetchedTransactions(data.transactions);
+  //       }
+  //     }
+  //   } catch (error: any) {
+  //     toast.error(`${error.message}`)
+  //   }
+  // }
+
   const getTransactions = async () => {
     try {
-      const response = await fetch("/api/transactions", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await fetch("/api/transactions", { method: "GET" });
       if (response.ok) {
         const data = await response.json();
-        if (data.success && data.transactions) {
-          setFetchedTransactions(data.transactions);
-        }
+        setFetchedTransactions(data.transactions ?? []);
+      } else if (response.status === 404) {
+        setFetchedTransactions([]); // no transactions yet, not an error
       }
     } catch (error: any) {
-      toast.error(`${error.message}`)
+      toast.error(error.message);
     }
   }
-
   const handleDelete = async (_id: string) => {
     try {
       const response = await fetch(`/api/transactions/${_id}`, {
@@ -95,7 +108,7 @@ export default function AddTransactionsPage() {
         const data = await response.json();
         if (data.success && data.transaction) {
           toast.success(data.message);
-          setFetchedTransactions(fetchedTransactions?.filter((transaction) => transaction._id !== _id) ?? null);
+          setFetchedTransactions(fetchedTransactions?.filter((transaction) => transaction.id !== _id) ?? null);
           await getTransactions();
         }
       }
@@ -271,8 +284,8 @@ export default function AddTransactionsPage() {
           <div className="mb-14 mt-14 flex gap-6 flex-wrap w-full">
             {fetchedTransactions.map((transactions) => (
               <TransactionCard
-                key={transactions._id}
-                _id={transactions._id}
+                key={transactions.id}
+                _id={transactions.id}
                 amount={transactions.amount}
                 category={transactions.category}
                 type={transactions.type}

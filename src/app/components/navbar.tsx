@@ -19,24 +19,19 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-6">
-        <Link className="relative text-md font-lato transition-all duration-300 
-             text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/">
+        <Link className="relative text-md font-lato transition-all duration-300 text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/">
           Home
         </Link>
-        <Link className="relative text-md font-lato transition-all duration-300 
-              text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/user-profile">
+        <Link className="relative text-md font-lato transition-all duration-300 text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/user-profile">
           User Profile
         </Link>
-        <Link className="relative text-md font-lato transition-all duration-300 
-              text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/transactions">
+        <Link className="relative text-md font-lato transition-all duration-300 text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/transactions">
           Transactions
         </Link>
-        <Link className="relative text-md font-lato transition-all duration-300 
-              text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/dashboard">
+        <Link className="relative text-md font-lato transition-all duration-300 text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/dashboard">
           Dashboard
         </Link>
-        <Link className="relative text-md font-lato transition-all duration-300 
-              text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/budget">
+        <Link className="relative text-md font-lato transition-all duration-300 text-textColor/80 hover:text-primary dark:hover:text-cyan-300" href="/budget">
           Budget
         </Link>
       </div>

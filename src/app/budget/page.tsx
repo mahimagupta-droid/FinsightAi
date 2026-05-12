@@ -16,9 +16,16 @@ export default function BudgetPage() {
     const totalExpenses = budgets.reduce((sum, items) => sum + items.spent, 0);
     const totalBudget = budgets.reduce((sum, items) => sum + items.limit, 0);
     const fetchBudgets = async () => {
-        const res = await fetch("/api/budgets");
-        const data = await res.json();
-        setBudgets(data);
+        try {
+            const res = await fetch("/api/budgets");
+            if (!res.ok) return; // don't overwrite state on error
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+                setBudgets(data); // only do this once your DB budgets have all required fields
+            }
+        } catch (error) {
+            console.error("Failed to fetch budgets:", error);
+        }
     };
     useEffect(() => {
         fetchBudgets();

@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-
+import { Prisma } from "@/generated/prisma/client";
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
     const reqBody = await request.json();
     const { email, name, age, monthlyIncome, savingsGoal } = reqBody;
-    const createResponse = prisma.user.create({
+    const createResponse = await prisma.user.create({
       data: {
         clerkId: userId,
         email: email,
@@ -42,7 +42,7 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userProfile = prisma.user.findUnique({ where: { clerkId: userId } });
+    const userProfile = await prisma.user.findUnique({ where: { clerkId: userId } });
     if (!userProfile) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -64,19 +64,16 @@ export async function DELETE() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const deleteResponse = prisma.user.delete({ where: { clerkId: userId } });
-    if (!deleteResponse) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    await prisma.user.delete({ where: { clerkId: userId } }); // no need to capture return value
     return NextResponse.json({
       message: "User profile deleted successfully",
       success: true,
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to delete user profile" },
-      { status: 500 },
-    );
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+    return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }
 
@@ -86,36 +83,20 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const reqBody = await request.json();
-    const { email, name, age, monthlyIncome, savingsGoal } = reqBody;
-    const updatedUser = prisma.user.update({
+    const { email, name, age, monthlyIncome, savingsGoal } = await request.json();
+    const updatedUser = await prisma.user.update({
       where: { clerkId: userId },
-      data: {
-        email: email,
-        name: name,
-        age: age,
-        monthlyIncome: monthlyIncome,
-        savingsGoal: savingsGoal,
-      },
+      data: { email, name, age, monthlyIncome, savingsGoal },
     });
-    if (updatedUser) {
-      return NextResponse.json({
-        message: "User updated successfully",
-        success: true,
-        user: updatedUser,
-      });
-    } else {
-      return NextResponse.json(
-        {
-          error: "User not found",
-          success: false,
-        },
-        {
-          status: 404,
-        },
-      );
+    return NextResponse.json({
+      message: "User updated successfully",
+      success: true,
+      user: updatedUser,
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      return NextResponse.json({ error: "User not found", success: false }, { status: 404 });
     }
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

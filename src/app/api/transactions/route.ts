@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = prisma.transaction.create({
+    const response = await prisma.transaction.create({
       data: {
         clerkId: userId,
         amount: amount,
@@ -60,27 +60,13 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    //  dbConnect();
-    const transactions = prisma.transaction.findMany({ where: { clerkId: userId } });
-    if (!transactions) {
-      return NextResponse.json(
-        { error: "No transactions found" },
-        { status: 404 },
-      );
-    }
+    const transactions = await prisma.transaction.findMany({ where: { clerkId: userId } });
     return NextResponse.json(
-      {
-        transactions: transactions,
-        success: true,
-        message: "Transaction successfully retrieved.",
-      },
+      { transactions, success: true, message: "Transactions retrieved." },
       { status: 200 },
     );
   } catch (error) {
     console.log(error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

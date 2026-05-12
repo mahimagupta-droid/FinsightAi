@@ -247,7 +247,6 @@ export default function UserProfilePage() {
                                     type="submit"
                                     disabled={creatingUser}
                                     className="bg-primary text-primary-textColor px-6 py-2 rounded-lg font-medium hover:bg-secondary transition duration-200 shadow-md disabled:opacity-50 cursor-pointer"
-                                    onClick={() => setUpdatingUser(true)}
                                 >
                                     {creatingUser ? "Creating User" : "Create User"}
                                 </button>
