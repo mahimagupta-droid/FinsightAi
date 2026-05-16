@@ -4,28 +4,60 @@ import SummaryCard from "@/components/summaryCard";
 import CategoryBudgetList from "@/components/Budgets/CategoryBudgetList";
 import CreateBudgetForm from "@/components/Budgets/CreateBudgetForm";
 import DonutChart from "@/components/Budgets/DonutChart";
-const MOCK_BUDGETS = [
-    { id: "1", category: "Food", spent: 320, limit: 500, icon: "UtensilsCrossed", color: "#FF6384" },
-    { id: "2", category: "Transport", spent: 180, limit: 200, icon: "Car", color: "#36A2EB" },
-    { id: "3", category: "Shopping", spent: 450, limit: 400, icon: "ShoppingBag", color: "#FFCE56" },
-    { id: "4", category: "Health", spent: 60, limit: 150, icon: "Heart", color: "#4BC0C0" },
-];
-const MOCK_INCOME = 100000;
+import { Budget } from "@/lib/types/budget";
+const MONTHLY_INCOME = 0;
+
 export default function BudgetPage() {
-    const [budgets, setBudgets] = useState(MOCK_BUDGETS);
+    const [budgets, setBudgets] = useState<Budget[]>([]);
     const totalExpenses = budgets.reduce((sum, items) => sum + items.spent, 0);
-    const totalBudget = budgets.reduce((sum, items) => sum + items.limit, 0);
+    const totalBudget = budgets.reduce((sum, items) => sum + items.monthlyLimit, 0);
+    // const fetchBudgets = async () => {
+    //     try {
+    //         const res = await fetch("/api/budgets");
+    //         if (!res.ok) return;
+    //         const data = await res.json();
+    //         console.log(data);
+    //         const mappedData = data.map((b: Budget) => ({
+    //             ...b,
+    //             monthlyLimit: Number(b.monthlyLimit),
+    //             spent: Number(b.spent)
+    //         }));
+    //         if (Array.isArray(mappedData) && mappedData.length > 0) {
+    //             setBudgets(mappedData);
+    //         } else {
+    //             setBudgets([]);
+    //         }
+    //     } catch (error) {
+    //         console.error("Failed to fetch budgets:", error);
+    //     }
+    // };
     const fetchBudgets = async () => {
-        try {
-            const res = await fetch("/api/budgets");
-            if (!res.ok) return; // don't overwrite state on error
-            const data = await res.json();
-            if (Array.isArray(data) && data.length > 0) {
-                setBudgets(data); // only do this once your DB budgets have all required fields
+        const [budgetsRes, transactionsRes] = await Promise.all([
+            fetch("/api/budgets"),
+            fetch("/api/transactions"),
+        ]);
+        const budgetsData = await budgetsRes.json();
+        const { transactions } = await transactionsRes.json();
+
+        // Sum spent per category from transactions this month
+        const now = new Date();
+        const spentByCategory: Record<string, number> = {};
+        transactions.forEach((t: any) => {
+            const tDate = new Date(t.date);
+            if (t.type === "expense"
+                && tDate.getMonth() === now.getMonth()
+                && tDate.getFullYear() === now.getFullYear()) {
+                spentByCategory[t.category] =
+                    (spentByCategory[t.category] ?? 0) + t.amount;
             }
-        } catch (error) {
-            console.error("Failed to fetch budgets:", error);
-        }
+        });
+
+        const mapped = budgetsData.map((b: any) => ({
+            ...b,
+            monthlyLimit: Number(b.monthlyLimit),
+            spent: spentByCategory[b.category] ?? 0,
+        }));
+        setBudgets(mapped);
     };
     useEffect(() => {
         fetchBudgets();
@@ -37,8 +69,8 @@ export default function BudgetPage() {
                 <h1 className="text-[3rem] font-bold mb-3 mt-5">Budget Overview</h1>
                 <div className="grid md:grid-cols-3 gap-6 mt-6 w-3/4">
                     <SummaryCard title="Total Expenses" amount={totalExpenses} type="expense" />
-                    <SummaryCard title="Remaining" amount={MOCK_INCOME - totalExpenses} type="balance" />
-                    <SummaryCard title="Total Income" amount={MOCK_INCOME} type="income" />
+                    <SummaryCard title="Remaining" amount={totalBudget - totalExpenses} type="balance" />
+                    <SummaryCard title="Total Income" amount={totalBudget} type="income" />
                 </div>
                 <div className="mt-[2rem] w-3/4 grid grid-cols-3 gap-6">
                     <div className="col-span-2">

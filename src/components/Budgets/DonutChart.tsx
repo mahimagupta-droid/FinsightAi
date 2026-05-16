@@ -1,13 +1,7 @@
 "use client";
 import { PieChart, Cell, Pie } from "recharts";
-type Budget = {
-    id: string;
-    category: string;
-    spent: number;
-    limit: number;
-    icon: string;
-    color?: string;
-}
+import { CATEGORY_META } from "@/components/Budgets/CategoryBudgetList";
+import { Budget } from "@/lib/types/budget";
 type Props = {
     budgets: Budget[];
 }
@@ -23,9 +17,12 @@ export default function DonutChart({ budgets }: Props) {
                     dataKey="spent"
                 // label={({ name, value }) => `${name}: ${value}%`}
                 >
-                    {budgets.map((entry, i) => (
-                        <Cell key={i} fill={entry.color} />
-                    ))}
+                    {budgets.map((entry, i) => {
+                        const meta = CATEGORY_META[entry.category];
+                        return (
+                            <Cell key={i} fill={meta?.color || "#888"} />
+                        )
+                    })}
                 </Pie>
             </PieChart>
             <div className="absolute text-center pointer-events-none">

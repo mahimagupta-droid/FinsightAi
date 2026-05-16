@@ -1,11 +1,11 @@
 "use client";
-
+import { EXPENSE_CATEGORIES } from "@/lib/constants";
 import { useForm } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { z } from "zod";
 const schema = z.object({
   category: z.string().min(1, "Category is required"),
-  limit: z.number().min(1, "Must be greater than 0"),
+  monthlyLimit: z.number().min(1, "Must be greater than 0"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -21,17 +21,27 @@ export default function CreateBudgetForm({ onSuccess }: CreateBudgetFormProps) {
 
   const onSubmit = async (data: FormData) => {
     try {
+      const now = new Date();
       const res = await fetch("/api/budgets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          date: now.getDate(),
+          month: now.getMonth() + 1,
+          year: now.getFullYear(),
+        }),
       });
+      console.log(res.status);
+      const responseData = await res.json();
+      console.log(responseData);
       if (!res.ok) throw new Error("Failed to create budget");
       reset();
       onSuccess();
     } catch (error) {
       console.error(error);
     }
+    console.log(data);
   };
 
   return (
@@ -50,10 +60,9 @@ export default function CreateBudgetForm({ onSuccess }: CreateBudgetFormProps) {
             {...register("category")}
           >
             <option value="">Select a category</option>
-            <option value="Food">Food</option>
-            <option value="Transport">Transport</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Health">Health</option>
+            {EXPENSE_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
           </select>
           {errors.category && (
             <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
@@ -70,10 +79,10 @@ export default function CreateBudgetForm({ onSuccess }: CreateBudgetFormProps) {
             type="number"
             className="w-full px-3 py-2 bg-white/50 dark:bg-black/40 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-white"
             placeholder="e.g. 500"
-            {...register("limit", { valueAsNumber: true })}
+            {...register("monthlyLimit", { valueAsNumber: true })}
           />
-          {errors.limit && (
-            <p className="text-red-500 text-sm mt-1">{errors.limit.message}</p>
+          {errors.monthlyLimit && (
+            <p className="text-red-500 text-sm mt-1">{errors.monthlyLimit.message}</p>
           )}
         </div>
 

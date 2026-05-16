@@ -1,16 +1,23 @@
-import { UtensilsCrossed, Car, ShoppingBag, Heart } from "lucide-react";
+import { UtensilsCrossed, Car, ShoppingBag, Heart, Banknote, CreditCard, Smile, Zap, GraduationCap, Home, MoreHorizontal } from "lucide-react";
 import { formatter } from "@/components/summaryCard";
-const ICON_MAP = { UtensilsCrossed, Car, ShoppingBag, Heart, }
-type Budget = {
-    id: string;
-    category: string;
-    spent: number;
-    limit: number;
-    icon: string;
-}
+import { Budget } from "@/lib/types/budget";
+export const ICON_MAP = { UtensilsCrossed, Car, ShoppingBag, Heart, Banknote, CreditCard, Smile, Zap, GraduationCap, Home, MoreHorizontal }
 type Props = {
     budgets: Budget[];
 }
+export const CATEGORY_META: Record<string, { icon: keyof typeof ICON_MAP; color: string }> = {
+    food: { icon: "UtensilsCrossed", color: "#FF6384" },
+    transport: { icon: "Car", color: "#36A2EB" },
+    shopping: { icon: "ShoppingBag", color: "#FFCE56" },
+    health: { icon: "Heart", color: "#4BC0C0" },
+    savings: { icon: "Banknote", color: "#66BB6A" },
+    subscriptions: { icon: "CreditCard", color: "#AB47BC" },
+    entertainment: { icon: "Smile", color: "#FF7043" },
+    utilities: { icon: "Zap", color: "#29B6F6" },
+    education: { icon: "GraduationCap", color: "#FFB300" },
+    housing: { icon: "Home", color: "#78909C" },
+    other: { icon: "MoreHorizontal", color: "#757575" },
+};
 const getBarColor = (percentage: number) => {
     if (percentage >= 100) return "bg-red-500";
     if (percentage >= 75) return "bg-yellow-500";
@@ -21,8 +28,10 @@ export default function CategoryBudgetList({ budgets }: Props) {
     return (
         <div className="flex flex-col gap-4 w-full">
             {budgets.map((b) => {
-                const percentage = Math.min((b.spent / b.limit) * 100, 100);
-                const IconComponent = ICON_MAP[b.icon as keyof typeof ICON_MAP];
+                const percentage = Math.min((b.spent / b.monthlyLimit) * 100, 100);
+                const meta = CATEGORY_META[b.category];
+                const IconComponent = meta ? ICON_MAP[meta.icon] : null;
+                if (!IconComponent) return null;
                 return (
                     <div key={b.id} className="flex flex-col gap-5">
                         <div className="bg-card mt-5 mb-5 p-5 rounded-md">
@@ -31,7 +40,7 @@ export default function CategoryBudgetList({ budgets }: Props) {
                                     <IconComponent size={25} />
                                     <p className="font-semibold">{b.category}</p>
                                 </div>
-                                <p className="text-muted-foreground font-semibold">{formatter.format(b.spent)} / {formatter.format(b.limit)}</p>
+                                <p className="text-muted-foreground font-semibold">{formatter.format(b.spent)} / {formatter.format(b.monthlyLimit)}</p>
                             </div>
                             <div className="w-full h-2 rounded-full bg-white/10">
                                 <div
