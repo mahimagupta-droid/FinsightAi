@@ -32,24 +32,18 @@ export default function CreateBudgetForm({ onSuccess }: CreateBudgetFormProps) {
           year: now.getFullYear(),
         }),
       });
-      console.log(res.status);
-      const responseData = await res.json();
-      console.log(responseData);
       if (!res.ok) throw new Error("Failed to create budget");
       reset();
       onSuccess();
     } catch (error) {
       console.error(error);
     }
-    console.log(data);
   };
 
   return (
     <div className="bg-white/10 dark:bg-black/20 backdrop-blur-lg rounded-2xl border border-white/20 shadow-xl p-6 w-full max-w-md mx-auto mt-6">
       <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">Create New Budget</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
-        {/* Category Field */}
         <div className="flex flex-col space-y-1">
           <label htmlFor="category" className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Category
@@ -68,8 +62,6 @@ export default function CreateBudgetForm({ onSuccess }: CreateBudgetFormProps) {
             <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
           )}
         </div>
-
-        {/* Limit Field */}
         <div className="flex flex-col space-y-1">
           <label htmlFor="limit" className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Limit
@@ -85,8 +77,6 @@ export default function CreateBudgetForm({ onSuccess }: CreateBudgetFormProps) {
             <p className="text-red-500 text-sm mt-1">{errors.monthlyLimit.message}</p>
           )}
         </div>
-
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 mt-4"

@@ -5,32 +5,11 @@ import CategoryBudgetList from "@/components/Budgets/CategoryBudgetList";
 import CreateBudgetForm from "@/components/Budgets/CreateBudgetForm";
 import DonutChart from "@/components/Budgets/DonutChart";
 import { Budget } from "@/lib/types/budget";
-const MONTHLY_INCOME = 0;
 
 export default function BudgetPage() {
     const [budgets, setBudgets] = useState<Budget[]>([]);
     const totalExpenses = budgets.reduce((sum, items) => sum + items.spent, 0);
     const totalBudget = budgets.reduce((sum, items) => sum + items.monthlyLimit, 0);
-    // const fetchBudgets = async () => {
-    //     try {
-    //         const res = await fetch("/api/budgets");
-    //         if (!res.ok) return;
-    //         const data = await res.json();
-    //         console.log(data);
-    //         const mappedData = data.map((b: Budget) => ({
-    //             ...b,
-    //             monthlyLimit: Number(b.monthlyLimit),
-    //             spent: Number(b.spent)
-    //         }));
-    //         if (Array.isArray(mappedData) && mappedData.length > 0) {
-    //             setBudgets(mappedData);
-    //         } else {
-    //             setBudgets([]);
-    //         }
-    //     } catch (error) {
-    //         console.error("Failed to fetch budgets:", error);
-    //     }
-    // };
     const fetchBudgets = async () => {
         const [budgetsRes, transactionsRes] = await Promise.all([
             fetch("/api/budgets"),
@@ -38,8 +17,6 @@ export default function BudgetPage() {
         ]);
         const budgetsData = await budgetsRes.json();
         const { transactions } = await transactionsRes.json();
-
-        // Sum spent per category from transactions this month
         const now = new Date();
         const spentByCategory: Record<string, number> = {};
         transactions.forEach((t: any) => {
