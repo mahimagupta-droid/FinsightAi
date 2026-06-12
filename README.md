@@ -1,85 +1,122 @@
-# FinSight AI 💰📊
-AI-Powered Personal Finance Tracker and Growth Advisor
-FinSight AI is a full-stack financial intelligence platform that helps users **track expenses, analyze spending behavior, protect savings, and grow their money** using data analytics and AI-driven insights.
-Unlike traditional expense trackers that only record transactions, FinSight AI helps users **understand their financial habits and make smarter financial decisions**.
+# FinSight AI — Personal Finance Tracker
 
-## Problem
-Many people track their expenses but still struggle with questions like:
-- Why am I overspending?
-- How can I increase my savings?
-- How do I avoid impulsive purchases?
-- What should I do with the money I save?
-FinSight AI addresses these problems by combining **financial tracking, analytics, and AI guidance** into a single platform.
+A full-stack personal finance application for tracking income and expenses,
+managing category-based budgets, and visualizing spending habits through
+interactive charts — all behind secure Clerk authentication.
 
-## Features
+> _Earn → Track → Analyze → Save → Grow_
 
-### Expense & Income Tracking
-- Add and categorize transactions
-- Track income sources
-- View transaction history
+**Live:** [finsight-ai-inky.vercel.app](https://finsight-ai-inky.vercel.app) · 
+**GitHub:** [github.com/mahimagupta-droid/FinsightAi](https://github.com/mahimagupta-droid/FinsightAi)
 
-### Analytics Dashboard
-- Monthly spending trends
-- Income vs expense comparison
-- Category-wise spending breakdown
-- Savings rate visualization
-
-### Budget Management
-- Set monthly budgets
-- Receive alerts when limits are exceeded
-
-### Behavioral Insights
-- Detect recurring expenses
-- Identify spending spikes
-- Understand financial habits
-
-### Savings Planner
-- Allocate savings into categories such as:
-  - Emergency funds
-  - Investments
-  - Skill development
-  - Flexible spending
-
-### Persona-Based Guidance
-Financial suggestions are personalized based on the user type:
-- College student
-- Working professional
-- Freelancer / entrepreneur
-
-### Investment Growth Simulation
-Users can estimate how their savings may grow over time through investments using compound growth models.
-
-### AI Financial Advisor
-An AI layer analyzes financial data and provides personalized insights, recommendations, and spending advice.
+---
 
 ## Tech Stack
 
-**Frontend**
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS · Radix UI · shadcn/ui |
+| Forms & Validation | React Hook Form + Zod |
+| Charts | Chart.js · Recharts |
+| Auth | Clerk |
+| Database | Neon (Serverless PostgreSQL) |
+| ORM | Prisma 7 (with Neon adapter) |
+| State | Zustand |
+| Deployment | Vercel |
 
-**Backend**
-- Next.js API Routes
-- Node.js
+---
 
-**Database**
-- MongoDB
+## Features
 
-**Visualization**
-- Chart libraries (Chart.js / ApexCharts / ECharts)
+- **Authentication** — Clerk sign-up/sign-in with per-user data isolation
+- **Dashboard** — Financial overview with total income, expenses, and balance
+  cards plus three interactive charts: pie (category breakdown), line (daily
+  trends), bar (monthly income vs expenses)
+- **Transactions** — Full CRUD for income and expense records with 10 expense
+  categories, 5 income categories, payment methods, and essential/recurring flags
+- **Budget Management** — Set monthly spending limits per category, track
+  spent vs budgeted, visualize with a donut chart
+- **User Profile** — Create, edit, and delete profile with monthly income and
+  savings goal fields
+- **Dark / Light Mode** — Theme toggling via next-themes
+- **AI Advisor** — *(In development)* Gemini API integration for personalized
+  spending insights and savings recommendations
 
-**AI Integration**
-- LLM APIs for generating financial insights
+---
 
-## Core Concept
-FinSight AI helps users move through the complete financial lifecycle:
+## Getting Started
 
-**Earn → Track → Analyze → Save → Protect → Grow**
+### Prerequisites
+- Node.js ≥ 18
+- Neon PostgreSQL database
+- Clerk application
 
-## Future Enhancements
-- Bank account integration
-- Investment portfolio tracking
-- AI financial chatbot
-- Financial goal planning
+### Setup
+
+```bash
+git clone https://github.com/mahimagupta-droid/FinsightAi.git
+cd FinsightAi
+npm install
+```
+
+Create a `.env` file:
+
+```env
+DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+```
+
+```bash
+npx prisma generate
+npx prisma db push
+npm run dev
+```
+
+---
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── budgets/           # Budget CRUD endpoints
+│   │   ├── transactions/      # Transaction CRUD endpoints
+│   │   └── user-profile/      # User profile endpoints
+│   ├── budget/                # Budget management page
+│   ├── dashboard/             # Analytics dashboard page
+│   ├── transactions/          # Add & manage transactions page
+│   ├── user-profile/          # User profile page
+│   ├── layout.tsx             # Root layout (Clerk + Theme providers)
+│   └── page.tsx               # Landing page
+├── components/
+│   ├── Budgets/               # Budget-specific components
+│   ├── charts/                # Chart components (Pie, Line, Bar)
+│   ├── ui/                    # Shared UI primitives
+│   ├── TransactionCard.tsx
+│   ├── dashboardCard.tsx
+│   └── ThemeToggle.tsx
+└── lib/
+    ├── prisma.ts              # Prisma client singleton
+    ├── constants.ts           # Category definitions
+    ├── schemas/               # Zod validation schemas
+    ├── types/                 # TypeScript type definitions
+    └── utils/                 # Helper utilities
+
+prisma/
+└── schema.prisma              # Database models (User, Budget, Transaction)
+```
+
+---
+
+## Database Schema
+
+**User** — clerkId, email, name, age, monthlyIncome, savingsGoal
+
+**Transaction** — clerkId, amount, type (income/expense), category,
+description, date, paymentMethod, isEssential, isRecurring
+
+**Budget** — clerkId, category, monthlyLimit, month, year
