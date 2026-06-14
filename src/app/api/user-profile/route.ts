@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@/generated/prisma/client";
+
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -83,10 +84,10 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const { email, name, age, monthlyIncome, savingsGoal } = await request.json();
+    const { email, name, age, monthlyIncome, savingsGoal, onboarded  } = await request.json();
     const updatedUser = await prisma.user.update({
       where: { clerkId: userId },
-      data: { email, name, age, monthlyIncome, savingsGoal },
+      data: { email, name, age, monthlyIncome, savingsGoal, onboarded },
     });
     return NextResponse.json({
       message: "User updated successfully",

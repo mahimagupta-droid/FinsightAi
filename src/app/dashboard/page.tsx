@@ -8,6 +8,8 @@ import { BarChart } from "@/components/charts/bar";
 
 export default function Dashboard() {
     const [transactions, setTransactions] = useState([]);
+    const [showOnboarding, setShowOnboarding] = useState(false);
+    const [onboardingLoading, setOnboardingLoading] = useState(true);
     const fetchTransactions = async () => {
         const response = await fetch("/api/transactions");
         if (response.ok) {
@@ -22,9 +24,43 @@ export default function Dashboard() {
         }
     }
 
+    const [onboardingData, setOnboardingData] = useState({
+    age: 0,
+    monthlyIncome: 0,
+    savingsGoal: 0,
+    frequency: "monthly"
+});
+
+const handleOnboardingSubmit = async () => {
+    const response = await fetch("/api/user-profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            age: onboardingData.age,
+            monthlyIncome: onboardingData.monthlyIncome,
+            savingsGoal: onboardingData.savingsGoal,
+            onboarded: true,
+        }),
+    });
+    if (response.ok) {
+        setShowOnboarding(false);
+    }
+}
+
+    const checkOnboarding = async () => {
+        const response = await fetch("/api/user-profile");
+        if (response.ok) {
+            const data = await response.json();
+            if (data.user.onboarded === false) {
+                setShowOnboarding(true);
+            }
+        }
+        setOnboardingLoading(false);
+    }
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchTransactions();
+        checkOnboarding();
     }, [])
 
     useEffect(() => {
@@ -144,6 +180,68 @@ export default function Dashboard() {
 
     return (
         <div className="flex flex-col gap-10 mb-20">
+
+            {/* Onboarding Modal */}
+            {showOnboarding && (
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
+                    <div className="bg-card border border-border rounded-xl p-8 w-full max-w-md flex flex-col gap-6">
+                        <div>
+                            <h2 className="text-2xl font-bold text-[var(--textColor)]">Welcome to FinsightAI</h2>
+                            <p className="text-[var(--accent)] mt-1">Just a few details to get you started</p>
+                        </div>
+
+                        <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-1">
+                                <label className="text-sm text-[var(--textColor)]">Age</label>
+                                <input
+                                    type="number"
+                                    placeholder="eg. 22"
+                                    className="bg-background border border-border rounded-lg px-4 py-2 text-[var(--textColor)]"
+                                    onChange={(e) => setOnboardingData({ ...onboardingData, age: Number(e.target.value) })}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label className="text-sm text-[var(--textColor)]">Monthly Income (₹)</label>
+                                <input
+                                    type="number"
+                                    placeholder="eg. 50000"
+                                    className="bg-background border border-border rounded-lg px-4 py-2 text-[var(--textColor)]"
+                                    onChange={(e) => setOnboardingData({ ...onboardingData, monthlyIncome: Number(e.target.value) })}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label className="text-sm text-[var(--textColor)]">Savings Goal (₹)</label>
+                                <input
+                                    type="number"
+                                    placeholder="eg. 100000"
+                                    className="bg-background border border-border rounded-lg px-4 py-2 text-[var(--textColor)]"
+                                    onChange={(e) => setOnboardingData({ ...onboardingData, savingsGoal: Number(e.target.value) })}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label className="text-sm text-[var(--textColor)]">Savings Goal Frequency</label>
+                                <select
+                                    className="bg-background border border-border rounded-lg px-4 py-2 text-[var(--textColor)]"
+                                    onChange={(e) => setOnboardingData({ ...onboardingData, frequency: e.target.value })}
+                                >
+                                    <option value="monthly">Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleOnboardingSubmit}
+                            className="bg-[var(--primary)] text-white rounded-lg px-4 py-2 font-semibold hover:opacity-90 transition"
+                        >
+                            Let&apos;s Go →
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Rest of dashboard */}
             <div className="flex flex-col gap-4 mt-10 mb-5">
                 <div className="flex justify-center items-center">
                     <h2 className="text-[var(--textColor)] text-3xl font-bold ">
@@ -164,7 +262,6 @@ export default function Dashboard() {
                     Track your spending patterns and financial health
                 </h3>
             </div>
-
             <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 bg-card border border-border p-6 rounded-xl w-full h-[625px] transition-colors duration-300">
                     <PieChart data={pieChartData} />
