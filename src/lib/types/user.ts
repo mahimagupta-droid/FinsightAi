@@ -5,6 +5,7 @@ export type UserTypes = {
     age?: number | null;
     monthlyIncome?: number | null;
     savingsGoal?: number | null;
+    onboarded: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
