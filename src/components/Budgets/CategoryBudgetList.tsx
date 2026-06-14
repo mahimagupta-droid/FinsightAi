@@ -10,13 +10,12 @@ export const CATEGORY_META: Record<string, { icon: keyof typeof ICON_MAP; color:
     transport: { icon: "Car", color: "#36A2EB" },
     shopping: { icon: "ShoppingBag", color: "#FFCE56" },
     health: { icon: "Heart", color: "#4BC0C0" },
-    savings: { icon: "Banknote", color: "#66BB6A" },
+    rent: { icon: "Home", color: "#78909C" },
     subscriptions: { icon: "CreditCard", color: "#AB47BC" },
     entertainment: { icon: "Smile", color: "#FF7043" },
     utilities: { icon: "Zap", color: "#29B6F6" },
     education: { icon: "GraduationCap", color: "#FFB300" },
-    housing: { icon: "Home", color: "#78909C" },
-    other: { icon: "MoreHorizontal", color: "#757575" },
+    other_expense: { icon: "MoreHorizontal", color: "#757575" },
 };
 const getBarColor = (percentage: number) => {
     if (percentage >= 100) return "bg-red-500";

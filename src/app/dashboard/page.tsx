@@ -10,6 +10,7 @@ export default function Dashboard() {
     const [transactions, setTransactions] = useState([]);
     const [showOnboarding, setShowOnboarding] = useState(false);
     const [onboardingLoading, setOnboardingLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const fetchTransactions = async () => {
         const response = await fetch("/api/transactions");
         if (response.ok) {
@@ -22,30 +23,31 @@ export default function Dashboard() {
         } else {
             console.error("Failed to fetch transactions");
         }
+        setLoading(false);
     }
 
     const [onboardingData, setOnboardingData] = useState({
-    age: 0,
-    monthlyIncome: 0,
-    savingsGoal: 0,
-    frequency: "monthly"
-});
-
-const handleOnboardingSubmit = async () => {
-    const response = await fetch("/api/user-profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            age: onboardingData.age,
-            monthlyIncome: onboardingData.monthlyIncome,
-            savingsGoal: onboardingData.savingsGoal,
-            onboarded: true,
-        }),
+        age: 0,
+        monthlyIncome: 0,
+        savingsGoal: 0,
+        frequency: "monthly"
     });
-    if (response.ok) {
-        setShowOnboarding(false);
+
+    const handleOnboardingSubmit = async () => {
+        const response = await fetch("/api/user-profile", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                age: onboardingData.age,
+                monthlyIncome: onboardingData.monthlyIncome,
+                savingsGoal: onboardingData.savingsGoal,
+                onboarded: true,
+            }),
+        });
+        if (response.ok) {
+            setShowOnboarding(false);
+        }
     }
-}
 
     const checkOnboarding = async () => {
         const response = await fetch("/api/user-profile");
@@ -177,10 +179,25 @@ const handleOnboardingSubmit = async () => {
             },
         ],
     };
-
+    if (loading) {
+        return (
+            <div className="flex flex-col gap-10 mb-20 animate-pulse">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+                    <div className="h-28 bg-card rounded-xl border border-border" />
+                    <div className="h-28 bg-card rounded-xl border border-border" />
+                    <div className="h-28 bg-card rounded-xl border border-border" />
+                </div>
+                <div className="h-96 bg-card rounded-xl border border-border" />
+                <div className="grid md:grid-cols-3 gap-6">
+                    <div className="h-64 bg-card rounded-xl border border-border" />
+                    <div className="h-64 bg-card rounded-xl border border-border" />
+                    <div className="h-64 bg-card rounded-xl border border-border" />
+                </div>
+            </div>
+        )
+    }
     return (
         <div className="flex flex-col gap-10 mb-20">
-
             {/* Onboarding Modal */}
             {showOnboarding && (
                 <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">

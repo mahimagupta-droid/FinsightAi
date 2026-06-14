@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState, useEffect } from "react";
 import SummaryCard from "@/components/summaryCard";
@@ -8,6 +9,7 @@ import { Budget } from "@/lib/types/budget";
 
 export default function BudgetPage() {
     const [budgets, setBudgets] = useState<Budget[]>([]);
+    const [loading, setLoading] = useState(true);
     const totalExpenses = budgets.reduce((sum, items) => sum + items.spent, 0);
     const totalBudget = budgets.reduce((sum, items) => sum + items.monthlyLimit, 0);
     const fetchBudgets = async () => {
@@ -35,11 +37,30 @@ export default function BudgetPage() {
             spent: spentByCategory[b.category] ?? 0,
         }));
         setBudgets(mapped);
+        setLoading(false);
     };
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchBudgets();
     }, []);
 
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center gap-6 mt-10 animate-pulse">
+                <div className="h-10 w-64 bg-card rounded-xl border border-border" />
+                <div className="grid md:grid-cols-3 gap-6 w-3/4">
+                    <div className="h-28 bg-card rounded-xl border border-border" />
+                    <div className="h-28 bg-card rounded-xl border border-border" />
+                    <div className="h-28 bg-card rounded-xl border border-border" />
+                </div>
+                <div className="grid grid-cols-3 gap-6 w-3/4">
+                    <div className="col-span-2 h-96 bg-card rounded-xl border border-border" />
+                    <div className="h-96 bg-card rounded-xl border border-border" />
+                </div>
+            </div>
+        )
+    }
+    
     return (
         <main className="w-full">
             <div className="flex flex-col items-center justify-center">
@@ -47,7 +68,8 @@ export default function BudgetPage() {
                 <div className="grid md:grid-cols-3 gap-6 mt-6 w-3/4">
                     <SummaryCard title="Total Expenses" amount={totalExpenses} type="expense" />
                     <SummaryCard title="Remaining" amount={totalBudget - totalExpenses} type="balance" />
-                    <SummaryCard title="Total Income" amount={totalBudget} type="income" />
+                    {/* <SummaryCard title="Total Income" amount={totalBudget} type="income" /> */}
+                    <SummaryCard title="Total Budget" amount={totalBudget} type="income" />
                 </div>
                 <div className="mt-[2rem] w-3/4 grid grid-cols-3 gap-6">
                     <div className="col-span-2">
