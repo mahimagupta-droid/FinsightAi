@@ -33,9 +33,12 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-center lg:justify-start">
               {user.isSignedIn ? (
-                <button className="px-8 py-3.5 bg-primary hover:bg-primary/85 text-primary-textColor font-semibold rounded-md transition-all duration-300 shadow-lg hover:shadow-primary/25">
-                  Get Started
-                </button>
+                // <button className="px-8 py-3.5 bg-primary hover:bg-primary/85 text-primary-textColor font-semibold rounded-md transition-all duration-300 shadow-lg hover:shadow-primary/25">
+                //   Get Started
+                // </button>
+                <Link href="/dashboard" className="px-8 py-3.5 bg-primary hover:bg-primary/85 text-primary-textColor font-semibold rounded-md transition-all duration-300 shadow-lg hover:shadow-primary/25">
+  Get Started
+</Link>
               ) : (
                 <Link href="/signup" className="px-8 py-3.5 bg-primary hover:bg-primary/85 text-primary-textColor font-semibold rounded-md transition-all duration-300 shadow-lg hover:shadow-primary/25">
                   Sign Up

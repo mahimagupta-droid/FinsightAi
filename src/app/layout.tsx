@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "./components/navbar";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { Lato, Lexend, Playfair_Display } from "next/font/google";
 import Footer from "@/components/ui/footer";
+import "./globals.css";
 
 const lato = Lato({
   subsets: ["latin"],
