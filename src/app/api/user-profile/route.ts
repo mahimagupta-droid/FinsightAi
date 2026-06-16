@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
         age: age,
         monthlyIncome: monthlyIncome,
         savingsGoal: savingsGoal,
-      }
+      },
     });
     return NextResponse.json({
       message: "User created successfully",
@@ -43,7 +43,9 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userProfile = await prisma.user.findUnique({ where: { clerkId: userId } });
+    const userProfile = await prisma.user.findUnique({
+      where: { clerkId: userId },
+    });
     if (!userProfile) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -71,7 +73,10 @@ export async function DELETE() {
       success: true,
     });
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
@@ -84,7 +89,8 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const { email, name, age, monthlyIncome, savingsGoal, onboarded  } = await request.json();
+    const { email, name, age, monthlyIncome, savingsGoal, onboarded } =
+      await request.json();
     const updatedUser = await prisma.user.update({
       where: { clerkId: userId },
       data: { email, name, age, monthlyIncome, savingsGoal, onboarded },
@@ -95,9 +101,18 @@ export async function PUT(request: NextRequest) {
       user: updatedUser,
     });
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-      return NextResponse.json({ error: "User not found", success: false }, { status: 404 });
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return NextResponse.json(
+        { error: "User not found", success: false },
+        { status: 404 },
+      );
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
