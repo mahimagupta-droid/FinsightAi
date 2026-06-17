@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 import LineChart from "@/components/charts/line";
 import { PieChart } from "@/components/charts/pie";
 import { BarChart } from "@/components/charts/bar";
-import {useFinanceStore} from "../../lib/store/useFinanceStore"
+import { useFinanceStore } from "../../lib/store/useFinanceStore"
 
 export default function Dashboard() {
-const { transactions, loading, fetchTransactions } = useFinanceStore();
+    const { transactions, loading, fetchTransactions } = useFinanceStore();
     const [showOnboarding, setShowOnboarding] = useState(false);
     const [onboardingLoading, setOnboardingLoading] = useState(true);
-    
+    const [categorySpending, setCategorySpending] = useState<{ category: string; total: number }[]>([]);
 
     const [onboardingData, setOnboardingData] = useState({
         age: 0,
@@ -20,6 +20,15 @@ const { transactions, loading, fetchTransactions } = useFinanceStore();
         frequency: "monthly"
     });
 
+    const fetchCategorySpending = async () => {
+        const response = await fetch("/api/insights/category-spending");
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                setCategorySpending(data.data);
+            }
+        }
+    }
     const handleOnboardingSubmit = async () => {
         const response = await fetch("/api/user-profile", {
             method: "PUT",
@@ -50,7 +59,8 @@ const { transactions, loading, fetchTransactions } = useFinanceStore();
         fetchTransactions();
         // eslint-disable-next-line react-hooks/set-state-in-effect
         checkOnboarding();
-    }, [])
+        fetchCategorySpending();
+    }, [fetchTransactions])
 
     const totalIncome = transactions.filter((transaction: any) => transaction.type == "income").reduce((total: any, currentTransaction: any) => total + currentTransaction.amount, 0);
     const totalExpenses = transactions.filter((transaction: any) => transaction.type == "expense").reduce((total: any, currentTransaction: any) => total + currentTransaction.amount, 0);
@@ -87,17 +97,8 @@ const { transactions, loading, fetchTransactions } = useFinanceStore();
     }
 
     //pie chart
-    const groupedByCategory = expenses.reduce((acc: any, curr: any) => {
-        const category = curr.category;
-        if (!acc[category]) {
-            acc[category] = curr.amount;
-        } else {
-            acc[category] += curr.amount;
-        }
-        return acc;
-    }, {})
-    const pieLabels = Object.keys(groupedByCategory);
-    const pieAmounts = Object.values(groupedByCategory);
+    const pieLabels = categorySpending.map((item) => item.category);
+    const pieAmounts = categorySpending.map((item) => item.total);
     const pieChartData = {
         labels: pieLabels,
         datasets: [
