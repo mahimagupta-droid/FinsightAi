@@ -34,7 +34,7 @@ export default function UserProfilePage() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.success && data.user) {
-                    toast.success("User created successfully");
+                    // toast.success("User created successfully");
                     setUser({
                         email: "",
                         name: "",
@@ -65,8 +65,8 @@ export default function UserProfilePage() {
                 const data = await response.json();
                 if (data.success && data.user) {
                     setUser(data.user);
-                    toast.success("User profile fetched successfully");
-                    console.log("Fetched user profile:", data.user);
+                    // toast.success("User profile fetched successfully");
+                    // console.log("Fetched user profile:", data.user);
                 } else {
                     throw new Error(data.error || "Failed to fetch user profile");
                 }
