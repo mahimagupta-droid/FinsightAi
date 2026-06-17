@@ -6,6 +6,7 @@ import LineChart from "@/components/charts/line";
 import { PieChart } from "@/components/charts/pie";
 import { BarChart } from "@/components/charts/bar";
 import { useFinanceStore } from "../../lib/store/useFinanceStore"
+import DateRangePicker from "../components/DateRangePicker";
 
 export default function Dashboard() {
     const { transactions, loading, fetchTransactions } = useFinanceStore();
@@ -13,7 +14,17 @@ export default function Dashboard() {
     const [onboardingLoading, setOnboardingLoading] = useState(true);
     const [categorySpending, setCategorySpending] = useState<{ category: string; total: number }[]>([]);
     const [recurringItems, setRecurringItems] = useState<{ description: string; averageAmount: number; occurrences: number }[]>([]);
+    const [spikes, setSpikes] = useState<{ category: string; currentSpend: number; average: number; percentageIncrease: number }[]>([]);
 
+    const fetchSpikes = async () => {
+        const response = await fetch("/api/insights/spikes");
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                setSpikes(data.spikes);
+            }
+        }
+    }
     const fetchRecurring = async () => {
         const response = await fetch("/api/insights/recurring");
         if (response.ok) {
@@ -30,14 +41,30 @@ export default function Dashboard() {
         frequency: "monthly"
     });
 
-    const fetchCategorySpending = async () => {
-        const response = await fetch("/api/insights/category-spending");
+    // const fetchCategorySpending = async () => {
+    //     const response = await fetch("/api/insights/category-spending");
+    //     if (response.ok) {
+    //         const data = await response.json();
+    //         if (data.success) {
+    //             setCategorySpending(data.data);
+    //         }
+    //     }
+    // }
+    const fetchCategorySpending = async (start?: Date, end?: Date) => {
+        let url = "/api/insights/category-spending";
+        if (start && end) {
+            url += `?start=${start.toISOString()}&end=${end.toISOString()}`;
+        }
+        const response = await fetch(url);
         if (response.ok) {
             const data = await response.json();
             if (data.success) {
                 setCategorySpending(data.data);
             }
         }
+    }
+    const handleRangeChange = (start: Date, end: Date) => {
+        fetchCategorySpending(start, end);
     }
     const handleOnboardingSubmit = async () => {
         const response = await fetch("/api/user-profile", {
@@ -71,6 +98,7 @@ export default function Dashboard() {
         checkOnboarding();
         fetchCategorySpending();
         fetchRecurring();
+        fetchSpikes();
     }, [fetchTransactions])
 
     const totalIncome = transactions.filter((transaction: any) => transaction.type == "income").reduce((total: any, currentTransaction: any) => total + currentTransaction.amount, 0);
@@ -272,6 +300,9 @@ export default function Dashboard() {
                 <h3 className="text-accent text-lg">
                     Track your spending patterns and financial health
                 </h3>
+                <div className="flex justify-center mt-4">
+                    <DateRangePicker onRangeChange={handleRangeChange} />
+                </div>
             </div>
             <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 bg-card border border-border p-6 rounded-xl w-full h-156.25 transition-colors duration-300">
@@ -297,6 +328,23 @@ export default function Dashboard() {
                                 <span className="text-textColor font-semibold">{item.description}</span>
                                 <span className="text-accent text-sm">
                                     ~₹{Math.round(item.averageAmount)} · {item.occurrences} months
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+            {spikes.length > 0 && (
+                <div className="flex flex-col gap-4">
+                    <h2 className="text-textColor text-2xl font-bold text-center">
+                        Spending Spikes
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {spikes.map((spike) => (
+                            <div key={spike.category} className="bg-card border border-danger/40 rounded-xl p-4 flex flex-col gap-2">
+                                <span className="text-textColor font-semibold capitalize">{spike.category}</span>
+                                <span className="text-danger text-sm">
+                                    ₹{spike.currentSpend} this month — {spike.percentageIncrease}% above average
                                 </span>
                             </div>
                         ))}
