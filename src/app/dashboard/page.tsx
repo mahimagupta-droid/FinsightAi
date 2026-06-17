@@ -12,7 +12,17 @@ export default function Dashboard() {
     const [showOnboarding, setShowOnboarding] = useState(false);
     const [onboardingLoading, setOnboardingLoading] = useState(true);
     const [categorySpending, setCategorySpending] = useState<{ category: string; total: number }[]>([]);
+    const [recurringItems, setRecurringItems] = useState<{ description: string; averageAmount: number; occurrences: number }[]>([]);
 
+    const fetchRecurring = async () => {
+        const response = await fetch("/api/insights/recurring");
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                setRecurringItems(data.recurring);
+            }
+        }
+    }
     const [onboardingData, setOnboardingData] = useState({
         age: 0,
         monthlyIncome: 0,
@@ -60,6 +70,7 @@ export default function Dashboard() {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         checkOnboarding();
         fetchCategorySpending();
+        fetchRecurring();
     }, [fetchTransactions])
 
     const totalIncome = transactions.filter((transaction: any) => transaction.type == "income").reduce((total: any, currentTransaction: any) => total + currentTransaction.amount, 0);
@@ -275,6 +286,23 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+            {recurringItems.length > 0 && (
+                <div className="flex flex-col gap-4">
+                    <h2 className="text-textColor text-2xl font-bold text-center">
+                        Subscriptions Detected
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {recurringItems.map((item) => (
+                            <div key={item.description} className="bg-card border border-border rounded-xl p-4 flex flex-col gap-2">
+                                <span className="text-textColor font-semibold">{item.description}</span>
+                                <span className="text-accent text-sm">
+                                    ~₹{Math.round(item.averageAmount)} · {item.occurrences} months
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
