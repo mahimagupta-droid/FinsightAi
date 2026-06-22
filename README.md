@@ -41,9 +41,18 @@ Most expense trackers tell you *what* you spent. They don't tell you *why* you'r
 - Donut chart showing budget distribution
 - Color-coded status — on track, warning, exceeded
 
+### Spending Intelligence
+- **Recurring expense detection** — automatically identifies subscriptions and repeat expenses by tracking merchant/description consistency across 3+ months
+- **Spending spike detection** — statistical anomaly detection using mean and standard deviation; flags categories where current spend exceeds 2 standard deviations from the historical average
+- **Server-side aggregation** — category-wise spending computed via Prisma `groupBy` directly in PostgreSQL instead of client-side JavaScript, keeping the app fast as transaction volume grows
+- **DateRangePicker** — filter all dashboard data by This Week, This Month, or Last 3 Months
+
 ### User Profile
 - Full CRUD for profile — age, monthly income, savings goal
 - Edit and delete account
+
+### Global State
+- Zustand store shares transactions and budgets across Dashboard and Budget pages — eliminates duplicate API calls and keeps data in sync across the app
 
 ---
 
@@ -61,6 +70,12 @@ Auth is a solved problem. Clerk handles sessions, OAuth providers, JWTs, and web
 **Why webhook-based user provisioning?**
 The alternative — a manual "Create Profile" form — creates a broken state where authenticated users have no DB record. The webhook approach guarantees the DB record exists before the user ever lands on the app.
 
+**Why server-side aggregation (Prisma `groupBy`) over client-side JavaScript?**
+Initially, category spending was computed by fetching all transactions and reducing them in the browser. This doesn't scale — every transaction has to travel over the network just to compute a handful of totals. Moving the aggregation into PostgreSQL via `groupBy` means the database (built specifically for this) does the work, and only the final totals are sent to the client.
+
+**Why mean + standard deviation for spike detection instead of a fixed threshold?**
+A fixed threshold (e.g., "flag anything over ₹5000") doesn't account for the fact that spending baselines differ wildly between categories and between users. Using each category's own historical mean and standard deviation makes spike detection personalized — what counts as unusual for one person's grocery spend may be completely normal for another's.
+
 ---
 
 ## Tech Stack
@@ -73,21 +88,24 @@ The alternative — a manual "Create Profile" form — creates a broken state wh
 | Auth | Clerk |
 | Database | PostgreSQL via Neon (serverless) |
 | ORM | Prisma 7 |
+| State Management | Zustand |
 | Charts | Recharts · Chart.js |
 | Forms | React Hook Form + Zod |
 | Deployment | Vercel |
 
 ---
 
-## In Progress
+## In Progress — Phase 2 (AI Insight Layer)
 
-- [ ] Zustand global state store
-- [ ] Prisma `groupBy` for server-side spending aggregation
-- [ ] Recurring expense detection algorithm
-- [ ] Spending spike detection (mean + standard deviation)
 - [ ] Persona-based onboarding (student / professional / freelancer)
 - [ ] AI insight cards via Gemini / GPT-4o-mini
 - [ ] Ask FinsightAI — streaming financial chat
+
+## Planned
+
+- [ ] Emergency fund + SIP calculators (Phase 3)
+- [ ] Investment guides & decision flow (Phase 3)
+- [ ] Redis caching, Jest tests, Docker (Phase 4)
 
 ---
 
