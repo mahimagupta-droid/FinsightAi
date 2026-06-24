@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
         age: age,
         monthlyIncome: monthlyIncome,
         savingsGoal: savingsGoal,
+        onboarded: true,
       },
     });
     return NextResponse.json({
@@ -89,11 +90,11 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const { email, name, age, monthlyIncome, savingsGoal, onboarded } =
+    const { email, name, age, monthlyIncome, savingsGoal, onboarded, persona, incomeRange, primaryGoal } =
       await request.json();
     const updatedUser = await prisma.user.update({
       where: { clerkId: userId },
-      data: { email, name, age, monthlyIncome, savingsGoal, onboarded },
+      data: { email, name, age, monthlyIncome, savingsGoal, onboarded, persona, incomeRange, primaryGoal },
     });
     return NextResponse.json({
       message: "User updated successfully",

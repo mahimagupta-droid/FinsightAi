@@ -15,7 +15,7 @@ export default function Dashboard() {
     const [categorySpending, setCategorySpending] = useState<{ category: string; total: number }[]>([]);
     const [recurringItems, setRecurringItems] = useState<{ description: string; averageAmount: number; occurrences: number }[]>([]);
     const [spikes, setSpikes] = useState<{ category: string; currentSpend: number; average: number; percentageIncrease: number }[]>([]);
-
+    const [currentStep, setCurrentStep] = useState(0);
     const fetchSpikes = async () => {
         const response = await fetch("/api/insights/spikes");
         if (response.ok) {
@@ -38,18 +38,12 @@ export default function Dashboard() {
         age: 0,
         monthlyIncome: 0,
         savingsGoal: 0,
-        frequency: "monthly"
+        frequency: "monthly",
+        persona: "",
+        incomeRange: "",
+        primaryGoal: ""
     });
 
-    // const fetchCategorySpending = async () => {
-    //     const response = await fetch("/api/insights/category-spending");
-    //     if (response.ok) {
-    //         const data = await response.json();
-    //         if (data.success) {
-    //             setCategorySpending(data.data);
-    //         }
-    //     }
-    // }
     const fetchCategorySpending = async (start?: Date, end?: Date) => {
         let url = "/api/insights/category-spending";
         if (start && end) {
@@ -75,6 +69,9 @@ export default function Dashboard() {
                 monthlyIncome: onboardingData.monthlyIncome,
                 savingsGoal: onboardingData.savingsGoal,
                 onboarded: true,
+                persona: onboardingData.persona,
+                incomeRange: onboardingData.incomeRange,
+                primaryGoal: onboardingData.primaryGoal,
             }),
         });
         if (response.ok) {
@@ -221,66 +218,135 @@ export default function Dashboard() {
     }
     return (
         <div className="flex flex-col gap-10 mb-20">
-            {/* Onboarding Modal */}
             {showOnboarding && (
                 <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
                     <div className="bg-card border border-border rounded-xl p-8 w-full max-w-md flex flex-col gap-6">
                         <div>
                             <h2 className="text-2xl font-bold text-textColor">Welcome to FinsightAI</h2>
-                            <p className="text-accent mt-1">Just a few details to get you started</p>
+                            <p className="text-accent mt-1">Step {currentStep + 1} of 3</p>
                         </div>
 
-                        <div className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-1">
-                                <label className="text-sm text-textColor">Age</label>
-                                <input
-                                    type="number"
-                                    placeholder="eg. 22"
-                                    className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
-                                    onChange={(e) => setOnboardingData({ ...onboardingData, age: Number(e.target.value) })}
-                                />
+                        {currentStep === 0 && (
+                            <div className="flex flex-col gap-4">
+                                <label className="text-sm text-textColor">Who are you?</label>
+                                <div className="flex flex-col gap-2">
+                                    {["student", "professional", "freelancer"].map((p) => (
+                                        <button
+                                            key={p}
+                                            onClick={() => setOnboardingData({ ...onboardingData, persona: p })}
+                                            className={`px-4 py-2 rounded-lg border capitalize text-left ${onboardingData.persona === p
+                                                ? "border-primary bg-primary/10 text-primary"
+                                                : "border-border text-textColor"
+                                                }`}
+                                        >
+                                            {p}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-1">
-                                <label className="text-sm text-textColor">Monthly Income (₹)</label>
-                                <input
-                                    type="number"
-                                    placeholder="eg. 50000"
-                                    className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
-                                    onChange={(e) => setOnboardingData({ ...onboardingData, monthlyIncome: Number(e.target.value) })}
-                                />
+                        )}
+
+                        {currentStep === 1 && (
+                            <div className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-sm text-textColor">Age</label>
+                                    <input
+                                        type="number"
+                                        placeholder="eg. 22"
+                                        className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
+                                        onChange={(e) => setOnboardingData({ ...onboardingData, age: Number(e.target.value) })}
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-sm text-textColor">Monthly Income (₹)</label>
+                                    <input
+                                        type="number"
+                                        placeholder="eg. 50000"
+                                        className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
+                                        onChange={(e) => setOnboardingData({ ...onboardingData, monthlyIncome: Number(e.target.value) })}
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-sm text-textColor">Income Range</label>
+                                    <select
+                                        className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
+                                        onChange={(e) => setOnboardingData({ ...onboardingData, incomeRange: e.target.value })}
+                                    >
+                                        <option value="<15k">Below ₹15,000</option>
+                                        <option value="15k-50k">₹15,000 – ₹50,000</option>
+                                        <option value="50k-1L">₹50,000 – ₹1,00,000</option>
+                                        <option value=">1L">Above ₹1,00,000</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-1">
-                                <label className="text-sm text-textColor">Savings Goal (₹)</label>
-                                <input
-                                    type="number"
-                                    placeholder="eg. 100000"
-                                    className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
-                                    onChange={(e) => setOnboardingData({ ...onboardingData, savingsGoal: Number(e.target.value) })}
-                                />
+                        )}
+
+                        {currentStep === 2 && (
+                            <div className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-sm text-textColor">Savings Goal (₹)</label>
+                                    <input
+                                        type="number"
+                                        placeholder="eg. 100000"
+                                        className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
+                                        onChange={(e) => setOnboardingData({ ...onboardingData, savingsGoal: Number(e.target.value) })}
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-sm text-textColor">Savings Goal Frequency</label>
+                                    <select
+                                        className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
+                                        onChange={(e) => setOnboardingData({ ...onboardingData, frequency: e.target.value })}
+                                    >
+                                        <option value="monthly">Monthly</option>
+                                        <option value="quarterly">Quarterly</option>
+                                        <option value="yearly">Yearly</option>
+                                    </select>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-sm text-textColor">Primary Financial Goal</label>
+                                    <select
+                                        className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
+                                        onChange={(e) => setOnboardingData({ ...onboardingData, primaryGoal: e.target.value })}
+                                    >
+                                        <option value="Save More">Save More</option>
+                                        <option value="Invest">Invest</option>
+                                        <option value="Clear Debt">Clear Debt</option>
+                                        <option value="Emergency Fund">Build Emergency Fund</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-1">
-                                <label className="text-sm text-textColor">Savings Goal Frequency</label>
-                                <select
-                                    className="bg-background border border-border rounded-lg px-4 py-2 text-textColor"
-                                    onChange={(e) => setOnboardingData({ ...onboardingData, frequency: e.target.value })}
+                        )}
+
+                        <div className="flex justify-between gap-4">
+                            {currentStep > 0 && (
+                                <button
+                                    onClick={() => setCurrentStep(currentStep - 1)}
+                                    className="px-4 py-2 rounded-lg border border-border text-textColor"
                                 >
-                                    <option value="monthly">Monthly</option>
-                                    <option value="quarterly">Quarterly</option>
-                                    <option value="yearly">Yearly</option>
-                                </select>
-                            </div>
+                                    Back
+                                </button>
+                            )}
+                            {currentStep < 2 ? (
+                                <button
+                                    onClick={() => setCurrentStep(currentStep + 1)}
+                                    className="flex-1 bg-primary text-white rounded-lg px-4 py-2 font-semibold hover:opacity-90 transition"
+                                >
+                                    Next →
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handleOnboardingSubmit}
+                                    className="flex-1 bg-primary text-white rounded-lg px-4 py-2 font-semibold hover:opacity-90 transition"
+                                >
+                                    Let&apos;s Go →
+                                </button>
+                            )}
                         </div>
-
-                        <button
-                            onClick={handleOnboardingSubmit}
-                            className="bg-primary text-white rounded-lg px-4 py-2 font-semibold hover:opacity-90 transition"
-                        >
-                            Let&apos;s Go →
-                        </button>
                     </div>
                 </div>
             )}
-
+            
             <div className="flex flex-col gap-4 mt-10 mb-5">
                 <div className="flex justify-center items-center">
                     <h2 className="text-textColor text-3xl font-bold ">
