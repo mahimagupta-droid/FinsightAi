@@ -1,6 +1,6 @@
-import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { getCategorySpending } from "../../lib/insights";
 
 export async function GET(request: NextRequest) {
     try {
@@ -17,22 +17,9 @@ export async function GET(request: NextRequest) {
         const start = startParam ? new Date(startParam) : new Date(now.getFullYear(), now.getMonth(), 1);
         const end = endParam ? new Date(endParam) : new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-        const result = await prisma.transaction.groupBy({
-            by: ['category'],
-            where: {
-                clerkId: userId,
-                type: 'expense',
-                date: { gte: start, lte: end },
-            },
-            _sum: { amount: true },
-        });
+        const data = await getCategorySpending(userId, start, end);
 
-        const formatted = result.map((item) => ({
-            category: item.category,
-            total: item._sum.amount ?? 0,
-        }));
-
-        return NextResponse.json({ success: true, data: formatted });
+        return NextResponse.json({ success: true, data: data });
     } catch (error) {
         console.error("Error fetching category spending:", error);
         return NextResponse.json({ error: "Failed to fetch category spending" }, { status: 500 });
