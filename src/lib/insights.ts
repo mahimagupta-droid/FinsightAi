@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-
+import { startOfMonth, endOfMonth } from "date-fns"
 export async function getReccuringExpenses(userId: string, threeMonthsAgo: Date,) {
   const transactions = await prisma.transaction.findMany({
     where: {
@@ -24,7 +24,7 @@ export async function getReccuringExpenses(userId: string, threeMonthsAgo: Date,
   });
 
   const recurringItems: {
-    description: string;
+    description: string
     averageAmount: number;
     occurrences: number;
   }[] = [];
@@ -137,4 +137,54 @@ export async function getExpenseSpikes(userId: string) {
     }
   });
   return spikes;
+}
+
+export async function buildFinancialSummary(userId: string) {
+  const userDetails = await prisma.user.findUnique({ where: { clerkId: userId } })
+  if (!userDetails) {
+    return "Please fill the details first"
+  }
+  const { persona, incomeRange, primaryGoal } = userDetails;
+  const monthStart = startOfMonth(new Date());
+  const monthEnd = endOfMonth(new Date());
+  const incomeResult = await prisma.transaction.aggregate({
+    where: {
+      clerkId: userId,
+      type: 'income',
+      date: { gte: monthStart, lte: monthEnd }
+    },
+    _sum: { amount: true },
+  })
+  const totalIncome = incomeResult._sum.amount ?? 0;
+  const expensesResult = await prisma.transaction.aggregate({
+    where: {
+      clerkId: userId,
+      type: 'expense',
+      date: { gte: monthStart, lte: monthEnd }
+    },
+    _sum: { amount: true },
+  })
+  const totalExpenses = expensesResult._sum.amount ?? 0;
+  const savings = totalIncome - totalExpenses;
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  const recurringExpenses = await getReccuringExpenses(userId, threeMonthsAgo);
+  const monthlyExpenses = await getCategorySpending(userId, monthStart, monthEnd);
+  const expenseSpikes = await getExpenseSpikes(userId);
+  const budgets = await prisma.budget.findMany({
+    where: {
+      clerkId: userId,
+      month: monthStart.getMonth() + 1,
+      year: monthStart.getFullYear(),
+    }
+  })
+  const exceedingBudget = budgets.map((budget) => {
+    const spent = monthlyExpenses.find((c) => c.category === budget.category)
+    return {
+      category: budget.category,
+      limit: budget.monthlyLimit,
+      spent: spent?.total ?? 0,
+    }
+  }).filter((b) => b.spent > b.limit);
+  return { persona, incomeRange, primaryGoal, totalIncome, totalExpenses, savings, recurringExpenses, monthlyExpenses, expenseSpikes, exceedingBudget };
 }

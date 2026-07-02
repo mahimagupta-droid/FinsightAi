@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from "./components/navbar";
+import Navbar from "../components/miscellaneous/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { Lato, Lexend, Playfair_Display } from "next/font/google";
 import Footer from "@/components/ui/footer";

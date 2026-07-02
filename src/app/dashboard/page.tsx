@@ -6,7 +6,7 @@ import LineChart from "@/components/charts/line";
 import { PieChart } from "@/components/charts/pie";
 import { BarChart } from "@/components/charts/bar";
 import { useFinanceStore } from "../../lib/store/useFinanceStore"
-import DateRangePicker from "../components/DateRangePicker";
+import DateRangePicker from "../../components/miscellaneous/DateRangePicker";
 
 export default function Dashboard() {
     const { transactions, loading, fetchTransactions } = useFinanceStore();
@@ -346,7 +346,7 @@ export default function Dashboard() {
                     </div>
                 </div>
             )}
-            
+
             <div className="flex flex-col gap-4 mt-10 mb-5">
                 <div className="flex justify-center items-center">
                     <h2 className="text-textColor text-3xl font-bold ">
