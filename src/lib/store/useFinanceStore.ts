@@ -21,18 +21,34 @@ interface Budget {
     year: number;
 }
 
+interface Insight {
+    type: string;
+    title: string;
+    description: string;
+    priority: string;
+}
+
 interface FinanceStore {
     transactions: Transaction[];
     budgets: Budget[];
     loading: boolean;
     fetchTransactions: () => Promise<void>;
     fetchBudgets: () => Promise<void>;
+
+    aiInsights: Insight[];
+    insightsLoading: boolean;
+    insightsFetched: boolean;
+    fetchInsights: (force?: boolean) => Promise<void>;
 }
 
-export const useFinanceStore = create<FinanceStore>((set) => ({
+export const useFinanceStore = create<FinanceStore>((set, get) => ({
     transactions: [],
     budgets: [],
     loading: true,
+
+    aiInsights: [],
+    insightsLoading: false,
+    insightsFetched: false,
 
     fetchTransactions: async () => {
         const response = await fetch("/api/transactions");
@@ -51,5 +67,17 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
             const budgetsData = await response.json();
             set({ budgets: budgetsData });
         }
+    },
+
+    fetchInsights: async (force = false) => {
+        const { insightsFetched } = get();
+        if (insightsFetched && !force) return;
+        set({ insightsLoading: true });
+        const response = await fetch("/api/ai/insights");
+        if (response.ok) {
+            const data = await response.json();
+            set({ aiInsights: data.insights, insightsFetched: true });
+        }
+        set({ insightsLoading: false });
     },
 }));

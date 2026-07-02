@@ -7,6 +7,7 @@ import { PieChart } from "@/components/charts/pie";
 import { BarChart } from "@/components/charts/bar";
 import { useFinanceStore } from "../../lib/store/useFinanceStore"
 import DateRangePicker from "../../components/miscellaneous/DateRangePicker";
+import AIInsightsPanel from "@/components/AIInsightsPanel";
 
 export default function Dashboard() {
     const { transactions, loading, fetchTransactions } = useFinanceStore();
@@ -417,6 +418,11 @@ export default function Dashboard() {
                     </div>
                 </div>
             )}
+            <div className="bg-card border border-border rounded-xl p-4 flex flex-col gap-2 mt-3">
+                <h1 className="text-textColor text-2xl font-bold text-center">AI Insights</h1>
+                <AIInsightsPanel />
+            </div>
         </div>
+
     );
 }
