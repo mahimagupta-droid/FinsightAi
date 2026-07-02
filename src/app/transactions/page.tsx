@@ -6,18 +6,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/constants";
 import { TransactionCard } from "@/components/TransactionCard";
+import { useFinanceStore } from "@/lib/store/useFinanceStore";
 export default function AddTransactionsPage() {
-  type fetchedTransactionType = {
-    id: string;
-    amount: number;
-    category: string;
-    type: string;
-    date: Date;
-    description: string;
-    paymentMethod: string;
-    isEssential: boolean;
-    isRecurring: boolean;
-  };
+  const { transactions: fetchedTransactions, loading, fetchTransactions } = useFinanceStore();
 
   const [transaction, setTransaction] = useState({
     amount: 0,
@@ -29,8 +20,6 @@ export default function AddTransactionsPage() {
     isEssential: false,
     isRecurring: false,
   })
-
-  const [fetchedTransactions, setFetchedTransactions] = useState<fetchedTransactionType[] | null>(null)
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -56,7 +45,7 @@ export default function AddTransactionsPage() {
             isEssential: false,
             isRecurring: false,
           })
-          await getTransactions();
+          await fetchTransactions();
         }
       }
     } catch (error: any) {
@@ -64,38 +53,7 @@ export default function AddTransactionsPage() {
     }
   }
 
-  // const getTransactions = async () => {
-  //   try {
-  //     const response = await fetch("/api/transactions", {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       if (data.success && data.transactions) {
-  //         setFetchedTransactions(data.transactions);
-  //       }
-  //     }
-  //   } catch (error: any) {
-  //     toast.error(`${error.message}`)
-  //   }
-  // }
 
-  const getTransactions = async () => {
-    try {
-      const response = await fetch("/api/transactions", { method: "GET" });
-      if (response.ok) {
-        const data = await response.json();
-        setFetchedTransactions(data.transactions ?? []);
-      } else if (response.status === 404) {
-        setFetchedTransactions([]); // no transactions yet, not an error
-      }
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  }
   const handleDelete = async (_id: string) => {
     try {
       const response = await fetch(`/api/transactions/${_id}`, {
@@ -108,8 +66,7 @@ export default function AddTransactionsPage() {
         const data = await response.json();
         if (data.success && data.transaction) {
           toast.success(data.message);
-          setFetchedTransactions(fetchedTransactions?.filter((transaction) => transaction.id !== _id) ?? null);
-          await getTransactions();
+          await fetchTransactions();
         }
       }
     } catch (error: any) {
@@ -117,8 +74,8 @@ export default function AddTransactionsPage() {
     }
   }
   useEffect(() => {
-    getTransactions()
-  }, [])
+    fetchTransactions();
+  }, [fetchTransactions])
   return (
     <div>
       <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center px-8 md:px-16 gap-16 min-h-[70vh] mt-10 mb-10">
@@ -275,12 +232,12 @@ export default function AddTransactionsPage() {
       </div>
       <div className="mb-10 mt-15 bg-card border border-border p-10 rounded-lg transition-colors duration-300">
         <h3 className="flex justify-center items-center text-3xl text-textColor font-semibold">Transaction Records</h3>
-        {fetchedTransactions == null && (
+        {fetchedTransactions.length === 0 && !loading && (
           <div>
             No transactions added yet!
           </div>
         )}
-        {fetchedTransactions && (
+        {fetchedTransactions.length > 0 && (
           <div className="mb-14 mt-14 flex gap-6 flex-wrap w-full">
             {fetchedTransactions.map((transactions) => (
               <TransactionCard
@@ -289,13 +246,13 @@ export default function AddTransactionsPage() {
                 amount={transactions.amount}
                 category={transactions.category}
                 type={transactions.type}
-                date={transactions.date}
+                date={new Date(transactions.date)}
                 description={transactions.description}
-                paymentMethod={transactions.paymentMethod}
+                paymentMethod={transactions.paymentMethod ?? ""}
                 isEssential={transactions.isEssential}
                 isRecurring={transactions.isRecurring}
                 onDelete={handleDelete}
-                onUpdate={getTransactions}
+                onUpdate={fetchTransactions}
               />
             ))}
           </div>

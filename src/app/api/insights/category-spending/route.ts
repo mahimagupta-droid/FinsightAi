@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { getCategorySpending } from "../../lib/insights";
+import { getCategorySpending } from "../../../../lib/insights";
 
 export async function GET(request: NextRequest) {
     try {

@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 
-export async function getReccuringExpenses( userId: string, threeMonthsAgo: Date,) {
+export async function getReccuringExpenses(userId: string, threeMonthsAgo: Date,) {
   const transactions = await prisma.transaction.findMany({
     where: {
       clerkId: userId,
@@ -10,7 +10,7 @@ export async function getReccuringExpenses( userId: string, threeMonthsAgo: Date
     orderBy: { date: "asc" },
   });
 
-  const groupedByDescription: Record< string,{ month: string; amount: number }[] > = {};
+  const groupedByDescription: Record<string, { month: string; amount: number }[]> = {};
 
   transactions.forEach((t) => {
     const monthKey = `${t.date.getFullYear()}-${t.date.getMonth()}`;
@@ -54,7 +54,7 @@ export async function getReccuringExpenses( userId: string, threeMonthsAgo: Date
 }
 
 
-export async function getCategorySpending( userId: string, start: Date, end: Date, ) {
+export async function getCategorySpending(userId: string, start: Date, end: Date,) {
   const result = await prisma.transaction.groupBy({
     by: ["category"],
     where: {
@@ -73,7 +73,7 @@ export async function getCategorySpending( userId: string, start: Date, end: Dat
 
 
 export async function getExpenseSpikes(userId: string) {
-      const transactions = await prisma.transaction.findMany({
+  const transactions = await prisma.transaction.findMany({
     where: {
       clerkId: userId,
       type: "expense",
@@ -136,4 +136,5 @@ export async function getExpenseSpikes(userId: string) {
       });
     }
   });
+  return spikes;
 }
